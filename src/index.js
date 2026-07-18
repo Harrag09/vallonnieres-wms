@@ -35,7 +35,7 @@ const App = () => {
     // 2. Register Service Worker
    if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register(`${process.env.PUBLIC_URL}/service-worker.js`)
+    navigator.serviceWorker.register(`https://github.com/Harrag09/vallonnieres-wms/blob/main/public/service-worker.js`)
       .then(reg => console.log('SW registered:', reg))
       .catch(err => console.log('SW registration failed:', err));
   });
