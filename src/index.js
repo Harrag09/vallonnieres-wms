@@ -34,7 +34,7 @@ const App = () => {
 
     // 2. Register Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
+      navigator.serviceWorker.register('https://harrag09.github.io/service-worker.js')
         .catch(err => console.log('SW registration failed:', err));
     }
 
