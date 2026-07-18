@@ -21,37 +21,16 @@ const App = () => {
   const [idcrm, setidcrm] = useState("");
   const [Name, setName] = useState("Dashbord");
 
-  // PWA State
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-
   useEffect(() => {
-    // 1. PWA: Listen for install prompt
-    const handler = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-
-    // 2. Register Service Worker
+    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register(process.env.PUBLIC_URL + '/service-worker.js')
-          .then(reg => console.log('SW registered:', reg))
+        navigator.serviceWorker.register(`${process.env.PUBLIC_URL}/service-worker.js`)
+          .then(reg => console.log('PWA Service Worker registered:', reg))
           .catch(err => console.log('SW registration failed:', err));
       });
     }
-
-    socket.on('connect', () => console.log('Connected to server', socket));
-
-    return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') setDeferredPrompt(null);
-  };
 
   useEffect(() => {
     const loginCookie = Cookies.get("isLoggedIn");
@@ -63,43 +42,28 @@ const App = () => {
       const dec = jwtDecode(accessToken);
       setdecoded(dec.Role);
       setIdidStore(dec.id);
-    } else {
-      setIsLoggedIn(false);
     }
   }, []);
 
-  const getDefaultRoute = (decoded) => {
-    if (decoded === "store") {
+  const getDefaultRoute = (role) => {
+    if (role === "store") {
       return <Route path="/" element={<Navigate to={`/admin/${Name}`} replace state={{ _id: idStore, idCRM: idcrm }} />} />;
-    } else if (decoded === "admin") {
+    } else if (role === "admin") {
       return <Route path="/" element={<Navigate to="/admin/users" replace />} />;
     }
   };
 
   return (
-    <>
-      {/* PWA Install Prompt Banner */}
-      {deferredPrompt && (
-        <div style={{ padding: '10px', background: '#f8f9fa', borderBottom: '1px solid #ccc', textAlign: 'center', zIndex: 9999 }}>
-          <span>Download our app for better navigation!</span>
-          <button onClick={handleInstallClick} style={{ marginLeft: '15px', padding: '5px 15px', cursor: 'pointer' }}>
-            Download
-          </button>
-        </div>
-      )}
-
+    <HashRouter>
       {isLoggedIn ? (
-        // Use HashRouter for GitHub Pages deployment
-        <HashRouter>
-          <Routes>
-            <Route path="/admin/*" element={<AdminLayout />} />
-            {getDefaultRoute(decoded)}
-          </Routes>
-        </HashRouter>
+        <Routes>
+          <Route path="/admin/*" element={<AdminLayout />} />
+          {getDefaultRoute(decoded)}
+        </Routes>
       ) : (
         <FirstPage />
       )}
-    </>
+    </HashRouter>
   );
 };
 
