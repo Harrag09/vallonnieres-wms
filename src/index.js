@@ -20,7 +20,7 @@ const App = () => {
   const [idStore, setIdidStore] = useState("");
   const [idcrm, setidcrm] = useState("");
   const [Name, setName] = useState("Dashbord");
-  
+
   // PWA State
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
@@ -33,16 +33,16 @@ const App = () => {
     window.addEventListener('beforeinstallprompt', handler);
 
     // 2. Register Service Worker
-   if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register(`https://github.com/Harrag09/vallonnieres-wms/blob/main/public/service-worker.js`)
-      .then(reg => console.log('SW registered:', reg))
-      .catch(err => console.log('SW registration failed:', err));
-  });
-}
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register(process.env.PUBLIC_URL + '/service-worker.js')
+          .then(reg => console.log('SW registered:', reg))
+          .catch(err => console.log('SW registration failed:', err));
+      });
+    }
 
     socket.on('connect', () => console.log('Connected to server', socket));
-    
+
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
