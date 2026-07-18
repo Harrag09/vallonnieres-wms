@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "bootstrap/dist/css/bootstrap.css";
 import "assets/scss/paper-dashboard.scss?v=1.3.0";
@@ -25,14 +25,14 @@ const App = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
-    // PWA: Listen for install prompt
+    // 1. PWA: Listen for install prompt
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Register Service Worker for offline support/installability
+    // 2. Register Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
         .catch(err => console.log('SW registration failed:', err));
@@ -86,12 +86,13 @@ const App = () => {
       )}
 
       {isLoggedIn ? (
-        <BrowserRouter>
+        // Use HashRouter for GitHub Pages deployment
+        <HashRouter>
           <Routes>
             <Route path="/admin/*" element={<AdminLayout />} />
             {getDefaultRoute(decoded)}
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       ) : (
         <FirstPage />
       )}
