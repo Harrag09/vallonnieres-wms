@@ -1,11 +1,10 @@
 {
   "files": {
     "main.css": "/vallonnieres-wms/static/css/main.0951ebc1.css",
-    "main.js": "/vallonnieres-wms/static/js/main.cba8df5c.js",
+    "main.js": "/vallonnieres-wms/static/js/main.c8b2a372.js",
     "static/js/239.f026d730.chunk.js": "/vallonnieres-wms/static/js/239.f026d730.chunk.js",
     "static/js/213.25790f8c.chunk.js": "/vallonnieres-wms/static/js/213.25790f8c.chunk.js",
     "static/js/455.fd5827b8.chunk.js": "/vallonnieres-wms/static/js/455.fd5827b8.chunk.js",
-    "static/media/index.cjs": "/vallonnieres-wms/static/media/index.d71cbdcf78104e4b0e53.cjs",
     "static/media/maksebLogo.png": "/vallonnieres-wms/static/media/maksebLogo.eee468ae6c1d7b85a4a8.png",
     "static/media/nucleo-icons.eot": "/vallonnieres-wms/static/media/nucleo-icons.bd42d77b9672555647d1.eot",
     "static/media/nucleo-icons.ttf": "/vallonnieres-wms/static/media/nucleo-icons.4466aeec3386b965a232.ttf",
@@ -14,15 +13,14 @@
     "static/media/nucleo-icons.woff2": "/vallonnieres-wms/static/media/nucleo-icons.ec16bc4cc4526801004d.woff2",
     "static/media/ticket.png": "/vallonnieres-wms/static/media/ticket.5584081fd12591cce755.png",
     "index.html": "/vallonnieres-wms/index.html",
-    "static/media/en-US.cjs": "/vallonnieres-wms/static/media/en-US.c3a6319ea4f219498e6f.cjs",
     "main.0951ebc1.css.map": "/vallonnieres-wms/static/css/main.0951ebc1.css.map",
-    "main.cba8df5c.js.map": "/vallonnieres-wms/static/js/main.cba8df5c.js.map",
+    "main.c8b2a372.js.map": "/vallonnieres-wms/static/js/main.c8b2a372.js.map",
     "239.f026d730.chunk.js.map": "/vallonnieres-wms/static/js/239.f026d730.chunk.js.map",
     "213.25790f8c.chunk.js.map": "/vallonnieres-wms/static/js/213.25790f8c.chunk.js.map",
     "455.fd5827b8.chunk.js.map": "/vallonnieres-wms/static/js/455.fd5827b8.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0951ebc1.css",
-    "static/js/main.cba8df5c.js"
+    "static/js/main.c8b2a372.js"
   ]
 }
