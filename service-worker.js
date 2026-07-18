@@ -1,8 +1,8 @@
 const CACHE_NAME = 'vallonieres-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json'
+  '/vallonnieres-wms/',
+  '/vallonnieres-wms/index.html',
+  '/vallonnieres-wms/manifest.json'
 ];
 
 // Install: Cache static assets
