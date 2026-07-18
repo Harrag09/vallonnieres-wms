@@ -33,10 +33,13 @@ const App = () => {
     window.addEventListener('beforeinstallprompt', handler);
 
     // 2. Register Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('https://harrag09.github.io/service-worker.js')
-        .catch(err => console.log('SW registration failed:', err));
-    }
+   if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`${process.env.PUBLIC_URL}/service-worker.js`)
+      .then(reg => console.log('SW registered:', reg))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
 
     socket.on('connect', () => console.log('Connected to server', socket));
     
