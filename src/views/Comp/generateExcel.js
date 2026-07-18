@@ -9,6 +9,10 @@ const formatValue = (value, devise) => {
 };
 
 const replaceUnderscores = (str) => {
+    if (str ==="Encaiser"){str="Encaissés"}
+    if (str ==="Rembourser"){str="Remboursés"}
+    if (str ==="Annuler"){str="Annulés"}
+    if (str ==="SurPlace"){str="Sur Place"}
     return str.replace(/_/g, " ");
 };
 
@@ -84,7 +88,7 @@ const generateExcel = (data, storeInformation, date1, date2) => {
                 ]);
             });
         } else if (section.title === 'Etat Ticket') {
-            worksheetData.push(['Encaiser', 'Rembourser', 'Annuler'], [`${section?.data.Encaiser} Ticket`, `${section?.data.Rembourser} Ticket`, `${section?.data.Annuler} Ticket`]);
+            worksheetData.push(['Encaissés', 'Remboursés', 'Annulés'], [`${section?.data.Encaiser} Ticket`, `${section?.data.Rembourser} Ticket`, `${section?.data.Annuler} Ticket`]);
         } else {
             worksheetData.push([section.title, 'Montant'], ...Object.entries(section?.data).filter(([key, value]) => value > 0).map(([key, value]) => [replaceUnderscores(key), `${formatValue(value, data.devise)} ${data.devise}`]));
         }

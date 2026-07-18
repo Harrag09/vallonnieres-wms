@@ -14,7 +14,7 @@ function Footer(props) {
             <hr/>
             <div >
              {1900 + new Date().getYear()}, 
-               By Makseb Solution
+               By Harrag Oussema
                
             </div>
           </div>

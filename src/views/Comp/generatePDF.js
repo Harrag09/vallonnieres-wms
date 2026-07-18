@@ -9,6 +9,10 @@ const formatValue = (value, devise) => {
     }
 };
 const replaceUnderscores = (str) => {
+    if (str ==="Encaiser"){str="Encaissés"}
+    if (str ==="Rembourser"){str="Remboursés"}
+    if (str ==="Annuler"){str="Annulés"}
+    if (str ==="SurPlace"){str="Sur Place"}
     return str.replace(/_/g, " ");
   };
 function formatDate(dateString) {
@@ -64,7 +68,7 @@ const generatePDF = (data, storeInformation, date1, date2) => {
         } else if (section.title === 'Ventes de Produits') {
             sectionData = [['Produit', 'Quantité', 'Somme'], ...Object.entries(section.data).filter(([product, details]) => product !== 'SommeTOTAL').map(([product, details]) => [replaceUnderscores(product), details.Qty !== 0 ? details.Qty : 'xx', `${formatValue(details.Somme, data.devise)} ${data.devise}`])];
         }else  if (section.title === 'Etat Ticket') {
-            sectionData = [[ 'Encaiser', 'Rembourser', 'Annuler'], [`${section?.data.Encaiser} Ticket`, `${section?.data.Rembourser} Ticket`, `${section?.data.Annuler} Ticket`]];
+            sectionData = [[ 'Encaissés', 'Remboursés', 'Annulés'], [`${section?.data.Encaiser} Ticket`, `${section?.data.Rembourser} Ticket`, `${section?.data.Annuler} Ticket`]];
         }  else {
             sectionData = [[section.title, 'Montant'], ...Object.entries(section?.data).filter(([key, value]) => value > 0).map(([key, value]) => [replaceUnderscores(key), `${formatValue(value, data.devise)} ${data.devise}`])];
         }

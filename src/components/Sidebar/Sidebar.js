@@ -47,7 +47,7 @@ function Sidebar(props) {
           
           className="simple-text logo-normal"
         >
-         Makseb Solution     </a>
+       Vergers des Vallonières  </a>
       </div>
       <div className="sidebar-wrapper" ref={sidebar}>
         <Nav>

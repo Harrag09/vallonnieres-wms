@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from 'jwt-decode';
 import { useState } from "react";
 import Profil from "views/Profil";
+import Stock from "views/Stock/Stock";
 const token = Cookies.get("access_token");
 const decoded = token ? jwtDecode(token) : "";
  const nm = Cookies.get("Name");
@@ -17,6 +18,15 @@ console.log()
 var routes = [
  
 ];
+
+ routes.push(
+  {
+    path: "/stock",
+    name: "stock",
+    icon: "nc-icon nc-bank",
+    component: <Stock/>,
+    layout: "/admin",
+  },);
 if (decoded.Role=== "admin") {
   routes.push(
     

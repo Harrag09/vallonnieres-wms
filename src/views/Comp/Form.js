@@ -76,6 +76,10 @@ function Form({ key1, devise, value, StartDate, EndDate }) {
   // };
 
   const replaceUnderscores = (str) => {
+  if (str ==="Encaiser"){str="Encaissés"}
+  if (str ==="Rembourser"){str="Remboursés"}
+  if (str ==="Annuler"){str="Annulés"}
+  if (str ==="SurPlace"){str="Sur Place"}
     return str.replace(/_/g, " ");
   };
 
