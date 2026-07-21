@@ -55,19 +55,19 @@ function Dashboard() {
   const [RepeterApi, setRepeterApi] = useState(false);
   const [StoreInformation, setStoreInformation] = useState({});
 
-  useEffect(() => {
-    const handleUpdate = (data) => {
-      setRepeterApi(true);
-    };
+  // useEffect(() => {
+  //   const handleUpdate = (data) => {
+  //     setRepeterApi(true);
+  //   };
 
-    if (tempReal === true) {
-      socket.on(`UpdateTempsReels${idCRM}`, handleUpdate);
-    }
+  //   if (tempReal === true) {
+  //     socket.on(`UpdateTempsReels${idCRM}`, handleUpdate);
+  //   }
 
-    return () => {
-      socket.off(`UpdateTempsReels${idCRM}`, handleUpdate);
-    };
-  }, [socket, idCRM]);
+  //   return () => {
+  //     socket.off(`UpdateTempsReels${idCRM}`, handleUpdate);
+  //   };
+  // }, [socket, idCRM]);
 
   const GetStatFromTableReel = async (a, b, c) => {
     try {

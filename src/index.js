@@ -9,10 +9,10 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 import AdminLayout from "layouts/Admin.js";
 import FirstPage from "views/FirstPage/FirstPage";
 import { jwtDecode } from "jwt-decode";
-import socketIOClient from 'socket.io-client';
+// import socketIOClient from 'socket.io-client';
 import { Url } from "Service/CategoriesServer";
 
-export const socket = socketIOClient(Url);
+// export const socket = socketIOClient(Url);
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -49,7 +49,7 @@ const App = () => {
     if (role === "store") {
       return <Route path="/" element={<Navigate to={`/admin/${Name}`} replace state={{ _id: idStore, idCRM: idcrm }} />} />;
     } else if (role === "admin") {
-      return <Route path="/" element={<Navigate to="/admin/users" replace />} />;
+      return <Route path="/" element={<Navigate to="/admin/stock" replace />} />;
     }
   };
 

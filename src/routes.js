@@ -19,7 +19,8 @@ var routes = [
  
 ];
 
- routes.push(
+
+   routes.push(
   {
     path: "/stock",
     name: "stock",

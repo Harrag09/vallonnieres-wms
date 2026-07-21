@@ -9,10 +9,10 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 import AdminLayout from "layouts/Admin.js";
 import FirstPage from "views/FirstPage/FirstPage";
 import { jwtDecode } from "jwt-decode";
-import socketIOClient, { io } from 'socket.io-client';
+// import socketIOClient, { io } from 'socket.io-client';
 import { Url } from "Service/CategoriesServer";
 import Profil from "views/Profil";
-export const socket = socketIOClient(Url);
+// export const socket = socketIOClient(Url);
 
 
 
@@ -25,16 +25,16 @@ const App = () => {
   const [idcrm, setidcrm] = useState("");
   const [Name, setName] = useState("Dashbord");
 
-useEffect(() => {
+// useEffect(() => {
 
-  socket.on('connect', () => {
-    console.log('Connected to server',socket);
+//   socket.on('connect', () => {
+//     console.log('Connected to server',socket);
 
     
    
-  });
+//   });
 
-}, [socket]);
+// }, [socket]);
 
 
   useEffect(() => {

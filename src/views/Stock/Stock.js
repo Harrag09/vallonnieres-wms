@@ -1,61 +1,48 @@
 // ======================================
 // COMPOSANT MAÎTRE (Stock.js)
 // ======================================
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import {
-  LayoutDashboard,
-  Warehouse as WarehouseIcon,
-  Package,
-  MapPin,
-  Search,
-  Move,
-  History,
-  Scale,
-  Plus,
-  Truck,
-  Eye,
-  X
+  LayoutDashboard, Warehouse as WarehouseIcon, Package, MapPin, Search, Move,
+  History, Scale, Plus, Truck, Eye, X
 } from "lucide-react";
+import ReactLoading from 'react-loading';
 
-// Imports des modules découplés
-import { PRODUCTS, COLD_ROOMS, STORES, CALIBERS, calculateWeight, INITIAL_PALOX } from "./data";
+import { CALIBERS, getFillLevelColor } from "./data";
 import { AddPaloxModal, MovePaloxModal } from "./PaloxModals";
 import RoomMapping from "./RoomMapping";
 import PivotZone from "./PivotZone";
+import { useStockLogic } from "./useStockLogic";
+
+
 
 // ======================================
-// STYLED COMPONENTS GÉNÉRAUX
+// STYLED COMPONENTS
 // ======================================
-// Dans Stock.js[cite: 3]
-const AppContainer = styled.div`  
+const AppContainer = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: #f8fafc;
   font-family: 'Inter', -apple-system, sans-serif;
-  /* Correction des paddings pour mobile */
-  padding: 0; 
-    padding-top: 40px; 
-
-  padding-bottom: 80px; /* Espace pour éviter le masquage par la navigation */
-  
+  padding: 0;
+  padding-top: 40px;
+  padding-bottom: 80px;
   @media(min-width: 1024px) {
     flex-direction: row;
     padding-bottom: 0;
   }
 `;
 
-
 const MainContent = styled.main`
   flex: 1;
   padding: 16px;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden; /* Empêche le défilement latéral global */
-  
-  @media(min-width: 768px) { 
-    padding: 32px 40px; 
+  overflow-x: hidden;
+  @media(min-width: 768px) {
+    padding: 32px 40px;
   }
 `;
 
@@ -66,17 +53,33 @@ const PageHeader = styled.header`
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
-  @media(min-width: 768px) { 
-    flex-direction: row; 
+  @media(min-width: 768px) {
+    flex-direction: row;
     align-items: center;
     margin-bottom: 32px;
   }
 `;
 
 const TitleGroup = styled.div`
-  h1 { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0; letter-spacing: -0.5px; }
-  p { font-size: 13px; color: #64748b; margin: 0; display: flex; align-items: center; gap: 6px; }
-  @media(min-width: 768px) { h1 { font-size: 26px; } p { font-size: 14px; } }
+  h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+  }
+  p {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  @media(min-width: 768px) {
+    h1 { font-size: 26px; }
+    p { font-size: 14px; }
+  }
 `;
 
 const TabBar = styled.div`
@@ -103,7 +106,10 @@ const TabButton = styled.button`
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { border-color: #2563eb; color: #2563eb; }
+  &:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+  }
 `;
 
 const MetricsGrid = styled.section`
@@ -125,11 +131,24 @@ const MetricCard = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
-  .val { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
-  .lbl { font-size: 11px; color: #64748b; font-weight: 500; text-transform: uppercase; }
-  .icon-box { background: #f1f5f9; padding: 8px; border-radius: 8px; color: #475569; }
-  
+  .val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 4px;
+  }
+  .lbl {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .icon-box {
+    background: #f1f5f9;
+    padding: 8px;
+    border-radius: 8px;
+    color: #475569;
+  }
   @media(min-width: 480px) {
     padding: 20px;
     .val { font-size: 22px; }
@@ -146,11 +165,10 @@ const FiltersRow = styled.div`
   padding: 16px;
   border-radius: 14px;
   border: 1px solid #e2e8f0;
-  
-  @media(min-width: 768px) { 
+  @media(min-width: 768px) {
     display: grid;
-    grid-template-columns: 2fr repeat(2, 1fr) auto; 
-    gap: 16px; 
+    grid-template-columns: 2fr repeat(2, 1fr) auto;
+    gap: 16px;
   }
 `;
 
@@ -163,7 +181,15 @@ const SearchInputWrapper = styled.div`
   border-radius: 10px;
   border: 1px solid #e2e8f0;
   color: #94a3b8;
-  input { border: none; background: transparent; width: 100%; height: 44px; outline: none; color: #1e293b; font-size: 14px; }
+  input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    height: 44px;
+    outline: none;
+    color: #1e293b;
+    font-size: 14px;
+  }
 `;
 
 const SelectInput = styled.select`
@@ -198,8 +224,23 @@ const BayHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  h3 { margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px; }
-  span { font-size: 11px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; }
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
 `;
 
 const ProgressTrack = styled.div`
@@ -207,7 +248,12 @@ const ProgressTrack = styled.div`
   background: #f1f5f9;
   border-radius: 10px;
   overflow: hidden;
-  div { height: 100%; width: ${p => p.pct}%; background: ${p => p.pct > 85 ? "#ef4444" : p.pct > 50 ? "#f59e0b" : "#10b981"}; transition: width 0.3s; }
+  div {
+    height: 100%;
+    width: ${p => p.pct}%;
+    background: ${p => p.pct > 85 ? "#ef4444" : p.pct > 50 ? "#f59e0b" : "#10b981"};
+    transition: width 0.3s;
+  }
 `;
 
 const PaloxStack = styled.div`
@@ -240,7 +286,6 @@ const StyledButton = styled.button`
   background: ${p => p.variant === "danger" ? "#fef2f2" : p.variant === "success" ? "#ecfdf5" : "#f0f5ff"};
   color: ${p => p.variant === "danger" ? "#ef4444" : p.variant === "success" ? "#10b981" : "#2563eb"};
   width: 100%;
-  
   &:hover {
     background: ${p => p.variant === "danger" ? "#ef4444" : p.variant === "success" ? "#10b981" : "#2563eb"};
     color: white;
@@ -265,12 +310,17 @@ const ModalContent = styled.div`
   padding: 24px;
   width: 100%;
   max-width: 500px;
-  
-  label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+  }
 `;
 
 const LogSection = styled.section`
-  margin-top: 32px; // Réduisez cette valeur à 16px pour tester sur mobile
+  margin-top: 32px;
   background: #ffffff;
   border-radius: 14px;
   border: 1px solid #e2e8f0;
@@ -290,181 +340,35 @@ const LogItem = styled.div`
   &:last-child { border: none; }
 `;
 
-// ======================================
-// ENSEMBLE DE LA LOGIQUE D'ORCHESTRATION
-// ======================================
 export default function StockManagement() {
-  const [palox, setPalox] = useState(INITIAL_PALOX);
-  const [history, setHistory] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState(1);
+  const { state, data, setters, handlers } = useStockLogic();
 
-  const [search, setSearch] = useState("");
-  const [selectedCaliber, setSelectedCaliber] = useState("ALL");
-  const [selectedProductFilter, setSelectedProductFilter] = useState("ALL");
-
-  const [transferringPalox, setTransferringPalox] = useState(null);
-  const [finalizingPalox, setFinalizingPalox] = useState(null);
-  const [isAddingPalox, setIsAddingPalox] = useState(false);
-  const [isPreviewingRoom, setIsPreviewingRoom] = useState(false);
-  const [selectedStores, setSelectedStores] = useState([]);
-
-  const [newPalox, setNewPalox] = useState({
-    productId: 1,
-    caliber: "70g - 85g",
-    coldRoomId: 1,
-    location: "A1",
-    size: "120/100"
-  });
-
-  const [returnDetails, setReturnDetails] = useState({
-    roomId: 1,
-    location: "A1",
-    fillLevel: "2/4"
-  });
-
-  const activeRoom = useMemo(() => {
-    return COLD_ROOMS.find(r => r.id === selectedRoom) || COLD_ROOMS[0];
-  }, [selectedRoom]);
-
-  const roomLocations = useMemo(() => {
-    return activeRoom.zones.flatMap(z => activeRoom.positions.map(p => `${z}${p}`));
-  }, [activeRoom]);
-
-  const addingRoomLocations = useMemo(() => {
-    const target = COLD_ROOMS.find(r => r.id === Number(newPalox.coldRoomId)) || COLD_ROOMS[0];
-    return target.zones.flatMap(z => target.positions.map(p => `${z}${p}`));
-  }, [newPalox.coldRoomId]);
-
-  const modalRoomLocations = useMemo(() => {
-    const target = COLD_ROOMS.find(r => r.id === Number(returnDetails.roomId)) || COLD_ROOMS[0];
-    return target.zones.flatMap(z => target.positions.map(p => `${z}${p}`));
-  }, [returnDetails.roomId]);
-
-  const currentRoomStockGrouped = useMemo(() => {
-    const map = {};
-    roomLocations.forEach(loc => { map[loc] = []; });
-
-    palox.forEach(p => {
-      if (p.coldRoomId === selectedRoom && p.status === "STORED") {
-        const prod = PRODUCTS[p.productId] || {};
-        const matchSearch = p.barcode.toLowerCase().includes(search.toLowerCase()) || prod.name?.toLowerCase().includes(search.toLowerCase());
-        const matchCaliber = selectedCaliber === "ALL" || p.caliber === selectedCaliber;
-        const matchProd = selectedProductFilter === "ALL" || p.productId === Number(selectedProductFilter);
-
-        if (matchSearch && matchCaliber && matchProd) {
-          if (map[p.location]) map[p.location].push({ ...p, productDetails: prod });
-        }
-      }
-    });
-    return map;
-  }, [palox, selectedRoom, roomLocations, search, selectedCaliber, selectedProductFilter]);
-
-  const processingPaloxList = useMemo(() => {
-    return palox.filter(p => p.status === "PROCESSING").map(p => ({
-      ...p,
-      productDetails: PRODUCTS[p.productId] || {}
-    }));
-  }, [palox]);
-
-  const metrics = useMemo(() => {
-    const items = palox.filter(p => p.coldRoomId === selectedRoom && p.status === "STORED");
-    const totalWeight = items.reduce((acc, curr) => acc + curr.weight, 0);
-    const totalPossibleSlots = roomLocations.length * activeRoom.maxCapacityPerPos;
-    return {
-      totalCount: items.length,
-      totalWeight,
-      occupancyPercentage: totalPossibleSlots > 0 ? Math.round((items.length / totalPossibleSlots) * 100) : 0
-    };
-  }, [palox, selectedRoom, roomLocations, activeRoom]);
-
-  const handleMovePalox = (targetRoomId, targetLocation) => {
-    if (!transferringPalox) return;
-    const destRoom = COLD_ROOMS.find(r => r.id === Number(targetRoomId));
-    
-  const currentOccupancy = palox.filter(p => p.coldRoomId === Number(targetRoomId) && p.location === targetLocation && p.status === "STORED").length;
-if (currentOccupancy >= destRoom.maxCapacityPerPos) {
-  alert("Emplacement saturé !");
-  return;
-}
-
-    setPalox(prev => prev.map(item => item.id === transferringPalox.id ? { ...item, coldRoomId: Number(targetRoomId), location: targetLocation } : item));
-    setHistory(prev => [{ action: "TRANSFERT", barcode: transferringPalox.barcode, desc: `Déplacé vers ${destRoom.name} [${targetLocation}]`, timestamp: new Date().toLocaleTimeString() }, ...prev]);
-    setTransferringPalox(null);
-  };
-
-  const handleCreatePalox = (e) => {
-    e.preventDefault();
-    // 1. Identification de la cible
-  const targetRoom = COLD_ROOMS.find(r => r.id === Number(newPalox.coldRoomId));
-  
-  // 2. Vérification de la saturation de l'emplacement choisi
-  const currentOccupancy = palox.filter(p => 
-    p.coldRoomId === Number(newPalox.coldRoomId) && 
-    p.location === newPalox.location && 
-    p.status === "STORED"
-  ).length;
-
-  if (currentOccupancy >= targetRoom.maxCapacityPerPos) {
-    alert("Impossible d'ajouter : Emplacement saturé !");
-    return; // Arrête la création
+  if (state.isLoading) {
+    return (
+      <AppContainer>
+        <div style={{ display: "flex", justifyContent: "center", width: "100%", marginTop: "250px" }}>
+          <ReactLoading type={'spin'} color={'#000'} height={50} width={50} />
+        </div>
+      </AppContainer>
+    );
   }
-    const weight = calculateWeight(newPalox.size, "Plein");
-    const generatedBarcode = `PLX-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    const item = {
-      id: Date.now(),
-      barcode: generatedBarcode,
-      productId: Number(newPalox.productId),
-      caliber: newPalox.caliber,
-      coldRoomId: Number(newPalox.coldRoomId),
-      location: newPalox.location,
-      size: newPalox.size,
-      weight,
-      fillLevel: "Plein",
-      status: "STORED",
-      dateAdded: new Date().toISOString().split('T')[0]
-    };
-
-    setPalox(prev => [...prev, item]);
-    setHistory(prev => [{ action: "ENTRÉE", barcode: generatedBarcode, desc: `Réceptionné dans ${targetRoom.name} [${newPalox.location}]`, timestamp: new Date().toLocaleTimeString() }, ...prev]);
-    setIsAddingPalox(false);
-  };
-
-  const handleFinalizeProcessing = (e) => {
-    e.preventDefault();
-    if (!finalizingPalox) return;
-    const computedWeight = calculateWeight(finalizingPalox.size, returnDetails.fillLevel);
-    const destStores = selectedStores.length > 0 ? selectedStores.join(", ") : "Non spécifié";
-
-    if (returnDetails.fillLevel === "Vide" || computedWeight === 0) {
-      setPalox(prev => prev.filter(p => p.id !== finalizingPalox.id));
-      setHistory(prev => [{ action: "VIDÉ", barcode: finalizingPalox.barcode, desc: `Livré à : ${destStores}. Palox recyclé.`, timestamp: new Date().toLocaleTimeString() }, ...prev]);
-    } else {
-      setPalox(prev => prev.map(p => p.id === finalizingPalox.id ? { ...p, status: "STORED", fillLevel: returnDetails.fillLevel, weight: computedWeight, coldRoomId: Number(returnDetails.roomId), location: returnDetails.location } : p));
-      setHistory(prev => [{ action: "RETOUR", barcode: finalizingPalox.barcode, desc: `Reliquat réintégré (${returnDetails.fillLevel} - ${computedWeight}kg). Distribué : ${destStores}`, timestamp: new Date().toLocaleTimeString() }, ...prev]);
-    }
-    setFinalizingPalox(null);
-    setSelectedStores([]);
-  };
 
   return (
     <AppContainer>
-    
-
       <MainContent>
         <PageHeader>
           <TitleGroup>
-            {/* <h1>Supervision Technique des Palox</h1>
-            <p>Gestion unifiée des stocks et des flux de maturation</p> */}
+            <h1>Gestion des Stocks Palox</h1>
+            <p><WarehouseIcon size={16} /> Suivi interactif des chambres froides</p>
           </TitleGroup>
-          <StyledButton onClick={() => setIsAddingPalox(true)} style={{ background: "#2563eb", color: "white", padding: "12px 24px", width: "auto" }}>
+          <StyledButton onClick={() => setters.setIsAddingPalox(true)} style={{ background: "#2563eb", color: "white", padding: "12px 24px", width: "auto" }}>
             <Plus size={16} /> Réceptionner Palox
           </StyledButton>
         </PageHeader>
 
         <TabBar>
-          {COLD_ROOMS.map(room => (
-            <TabButton key={room.id} active={selectedRoom === room.id} onClick={() => setSelectedRoom(room.id)}>
+          {data.COLD_ROOMS.map(room => (
+            <TabButton key={room._id} active={state.selectedRoom === room._id} onClick={() => setters.setSelectedRoom(room._id)}>
               <WarehouseIcon size={16} /> {room.name}
             </TabButton>
           ))}
@@ -472,15 +376,15 @@ if (currentOccupancy >= destRoom.maxCapacityPerPos) {
 
         <MetricsGrid>
           <MetricCard>
-            <div><div className="lbl">Total Palox</div><div className="val">{metrics.totalCount} Palox</div></div>
+            <div><div className="lbl">Total Palox</div><div className="val">{data.metrics.totalCount} Palox</div></div>
             <div className="icon-box"><Package size={20} /></div>
           </MetricCard>
           <MetricCard>
-            <div><div className="lbl">Masse Totale</div><div className="val">{metrics.totalWeight} kg</div></div>
+            <div><div className="lbl">Masse Totale</div><div className="val">{data.metrics.totalWeight} kg</div></div>
             <div className="icon-box"><Scale size={20} /></div>
           </MetricCard>
           <MetricCard>
-            <div><div className="lbl">Occupation Salle</div><div className="val">{metrics.occupancyPercentage}%</div></div>
+            <div><div className="lbl">Occupation Salle</div><div className="val">{data.metrics.occupancyPercentage}%</div></div>
             <div className="icon-box"><WarehouseIcon size={20} /></div>
           </MetricCard>
         </MetricsGrid>
@@ -488,142 +392,191 @@ if (currentOccupancy >= destRoom.maxCapacityPerPos) {
         <FiltersRow>
           <SearchInputWrapper>
             <Search size={18} />
-            <input placeholder="Rechercher code ou variété..." value={search} onChange={e => setSearch(e.target.value)} />
+            <input placeholder="Rechercher code ou variété..." value={state.search} onChange={e => setters.setSearch(e.target.value)} />
           </SearchInputWrapper>
 
-          <SelectInput value={selectedCaliber} onChange={e => setSelectedCaliber(e.target.value)}>
+          <SelectInput value={state.selectedCaliber} onChange={e => setters.setSelectedCaliber(e.target.value)}>
             <option value="ALL">Tous Calibres</option>
             {CALIBERS.map(c => <option key={c} value={c}>{c}</option>)}
           </SelectInput>
 
-          <SelectInput value={selectedProductFilter} onChange={e => setSelectedProductFilter(e.target.value)}>
+          <SelectInput value={state.selectedProductFilter} onChange={e => setters.setSelectedProductFilter(e.target.value)}>
             <option value="ALL">Toutes Variétés</option>
-            {Object.values(PRODUCTS).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+            {Object.values(data.PRODUCTS).map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
           </SelectInput>
 
-          <StyledButton onClick={() => setIsPreviewingRoom(true)} style={{ background: "#0284c7", color: "white", height: "46px" }}>
+          <StyledButton onClick={() => setters.setIsPreviewingRoom(true)} style={{ background: "#0284c7", color: "white", height: "46px" }}>
             <Eye size={16} /> Plan Cartographie
           </StyledButton>
         </FiltersRow>
 
         <GridMapContainer>
-          {roomLocations.map(locCode => {
-            const locPaloxList = currentRoomStockGrouped[locCode] || [];
-            const capacityPercentage = Math.round((locPaloxList.length / activeRoom.maxCapacityPerPos) * 100);
+          {data.roomLocations.map(locCode => {
+            const locPaloxList = data.currentRoomStockGrouped[locCode] || [];
+            const capacityPercentage = Math.round((locPaloxList.length / data.activeRoom.maxCapacityPerPos) * 100);
 
             return (
               <BayCard key={locCode}>
                 <BayHeader>
                   <h3><MapPin size={16} /> Emplacement {locCode}</h3>
-                  <span>{locPaloxList.length}/{activeRoom.maxCapacityPerPos} MAX</span>
+                  <span>{locPaloxList.length}/{data.activeRoom.maxCapacityPerPos} MAX</span>
                 </BayHeader>
                 <ProgressTrack pct={capacityPercentage}><div /></ProgressTrack>
-<PaloxStack>
-  {locPaloxList.length === 0 ? (
-    <div style={{ color: "#94a3b8", fontSize: "13px", textAlign: "center", padding: "10px 0" }}>Disponible</div>
-  ) : (
-    (() => {
-      // Regroupement par produit et calibre
-      const grouped = locPaloxList.reduce((acc, item) => {
-        const key = `${item.productId}_${item.caliber}`;
-        if (!acc[key]) acc[key] = { ...item, count: 1 };
-        else acc[key].count += 1;
-        return acc;
-      }, {});
+                <PaloxStack>
+                  {locPaloxList.length === 0 ? (
+                    <div style={{ color: "#94a3b8", fontSize: "13px", textAlign: "center", padding: "10px 0" }}>Disponible</div>
+                  ) : (
+                    (() => {
+                      const grouped = locPaloxList.reduce((acc, item) => {
+                        const key = `${item.productId}_${item.caliber}_${item.fillLevel}`;
+                        if (!acc[key]) acc[key] = { ...item, count: 1 };
+                        else acc[key].count += 1;
+                        return acc;
+                      }, {});
 
-      return Object.values(grouped).map(item => (
-        <PaloxItem key={`${item.productId}-${item.caliber}`} color={item.productDetails.color}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {/* Design identique : le code barre affiche maintenant la quantité groupée */}
-            <strong style={{ color: "#0f172a" }}>{item.count}x {item.barcode}</strong>
-            <span style={{ fontSize: "11px", fontWeight: "700", background: "#edf2f7", padding: "2px 6px", borderRadius: "4px" }}>
-              {item.fillLevel}
-            </span>
-          </div>
-          <div style={{ fontSize: "13px", fontWeight: "600", color: "#334155", margin: "6px 0" }}>
-            {item.productDetails.icon} {item.productDetails.name} ({item.caliber})
-          </div>
-          {/* Les boutons conservent le design StyledButton original */}
-          <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
-            <StyledButton onClick={() => setTransferringPalox(item)}><Move size={12} /> Déplacer</StyledButton>
-            <StyledButton variant="danger" onClick={() => setPalox(prev => prev.map(p => p.id === item.id ? { ...p, status: "PROCESSING" } : p))}><Truck size={12} /> Sortie</StyledButton>
-          </div>
-        </PaloxItem>
-      ));
-    })()
-  )}
-</PaloxStack>
+                      return Object.values(grouped).map(item => (
+                        <PaloxItem key={`${item.productId}-${item.caliber}`} color={item.productDetails?.color}>
+                          <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <strong style={{ color: "#0f172a" }}>{item.count}x {item.barcode}</strong>
+                            <span style={{ fontSize: "11px", fontWeight: "700", background: getFillLevelColor(item.fillLevel), color: "#ffffff", padding: "2px 6px", borderRadius: "4px" }}>
+                              {item.fillLevel}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: "13px", fontWeight: "600", color: "#334155", margin: "6px 0" }}>
+                            {item.productDetails?.icon} {item.productDetails?.name} ({item.caliber})
+                          </div>
+                          <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
+                            <StyledButton onClick={() => setters.setTransferringPalox(item)}>
+                              <Move size={12} /> Déplacer
+                            </StyledButton>
+                            <StyledButton variant="danger" onClick={() => handlers.initiateTransit(item, locCode)}>
+                              <Truck size={12} /> Sortie
+                            </StyledButton>
+                          </div>
+                        </PaloxItem>
+                      ));
+                    })()
+                  )}
+                </PaloxStack>
               </BayCard>
             );
           })}
         </GridMapContainer>
 
-        <PivotZone processingPaloxList={processingPaloxList} onFinalize={(item) => { setFinalizingPalox(item); setReturnDetails({ roomId: selectedRoom, location: "A1", fillLevel: "2/4" }); }} />
+        <PivotZone 
+          processingPaloxList={data.processingPaloxList} 
+          onFinalize={(item) => { 
+            setters.setFinalizingPalox(item); 
+            setters.setReturnDetails({ roomId: state.selectedRoom, location: "A1", fillLevel: "2/4" }); 
+          }} 
+        />
 
         <LogSection>
           <h3><History size={18} /> Registre des Mouvements de Flux</h3>
-          {history.length === 0 ? (
+          {data.history.length === 0 ? (
             <p style={{ color: "#94a3b8", fontSize: "13px", margin: 0 }}>Aucun mouvement enregistré.</p>
           ) : (
-            history.map((h, i) => (
-              <LogItem key={i}>
-                <div><strong style={{ color: h.action === "ENTRÉE" || h.action === "RETOUR" ? "#10b981" : "#ef4444" }}>[{h.action}]</strong> {h.barcode} - {h.desc}</div>
-                <div style={{ color: "#94a3b8", fontSize: "12px" }}>{h.timestamp}</div>
+            data.history.map((h, i) => (
+              <LogItem key={h._id || i}>
+                <div><strong style={{ color: h.action === "ENTRÉE" || h.action === "RETOUR" ? "#10b981" : h.action === "TRANSFERT" ? "#3b82f6" : "#ef4444" }}>[{h.action}]</strong> {h.barcode} - {h.desc}</div>
+                <div style={{ color: "#94a3b8", fontSize: "12px" }}>{new Date(h.timestamp || Date.now()).toLocaleTimeString()}</div>
               </LogItem>
             ))
           )}
         </LogSection>
 
-        {/* MODAL : RAJOUT */}
-        <AddPaloxModal isOpen={isAddingPalox} onClose={() => setIsAddingPalox(false)} newPalox={newPalox} setNewPalox={setNewPalox} addingRoomLocations={addingRoomLocations} onCreate={handleCreatePalox} />
-
-        {/* MODAL : TRANSFERT */}
-        <MovePaloxModal transferringPalox={transferringPalox} roomLocations={roomLocations} onClose={() => setTransferringPalox(null)} onMove={handleMovePalox} />
-
-        {/* MODAL : CLÔTURE & DISTRIBUTION */}
-        {finalizingPalox && (
+        <AddPaloxModal
+          PRODUCTS={data.PRODUCTS} COLD_ROOMS={data.COLD_ROOMS} CALIBERS={CALIBERS}
+          isOpen={state.isAddingPalox} onClose={() => setters.setIsAddingPalox(false)}
+          newPalox={state.newPalox} setNewPalox={setters.setNewPalox}
+          addingRoomLocations={data.addingRoomLocations} onCreate={handlers.handleCreatePalox}
+        />
+        
+        <MovePaloxModal
+          transferringPalox={state.transferringPalox} roomLocations={data.roomLocations}
+          COLD_ROOMS={data.COLD_ROOMS} onClose={() => setters.setTransferringPalox(null)} onMove={handlers.handleMovePalox}
+        />
+        
+        {state.finalizingPalox && (
           <ModalOverlay>
             <ModalContent>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
-                <h3 style={{ margin: 0 }}>Ventilation : {finalizingPalox.barcode}</h3>
-                <X size={20} onClick={() => setFinalizingPalox(null)} style={{ cursor: 'pointer' }} />
+                <h3 style={{ margin: 0 }}>
+                  {data.PRODUCTS[state.finalizingPalox.productId]?.icon} {data.PRODUCTS[state.finalizingPalox.productId]?.name} 
+                  <span style={{ margin: "0 6px", color: "#64748b" }}>({state.finalizingPalox?.caliber})</span>
+                </h3>
+                <X size={20} onClick={() => setters.setFinalizingPalox(null)} style={{ cursor: 'pointer' }} />
               </div>
-              <form onSubmit={handleFinalizeProcessing}>
+
+              <form onSubmit={handlers.handleFinalizeProcessing}>
                 <div style={{ marginBottom: "16px" }}>
                   <label>Sélectionner les Magasins Destinataires :</label>
-                  {STORES.map(store => (
+                  {data.STORES.map(store => (
                     <label key={store} style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: "normal", margin: "4px 0" }}>
-                      <input type="checkbox" checked={selectedStores.includes(store)} onChange={() => setSelectedStores(prev => prev.includes(store) ? prev.filter(s => s !== store) : [...prev, store])} /> {store}
+                      <input 
+                        type="checkbox" 
+                        checked={state.selectedStores.includes(store)} 
+                        onChange={() => setters.setSelectedStores(prev => prev.includes(store) ? prev.filter(s => s !== store) : [...prev, store])} 
+                      /> 
+                      {store}
                     </label>
                   ))}
                 </div>
+
                 <div style={{ marginBottom: "16px" }}>
                   <label>Volume Restant :</label>
-                  <SelectInput value={returnDetails.fillLevel} onChange={e => setReturnDetails({ ...returnDetails, fillLevel: e.target.value })}>
-                    <option value="Plein">Plein (Non touché)</option>
-                    <option value="3/4">3/4 Restant</option>
-                    <option value="2/4">2/4 Restant (Moitié)</option>
-                    <option value="1/4">1/4 Restant</option>
-                    <option value="Vide">Vide (Sortie Définitve)</option>
+                  <SelectInput 
+                    value={state.returnDetails.fillLevel} 
+                    onChange={e => setters.setReturnDetails({ ...state.returnDetails, fillLevel: e.target.value })}
+                  >
+                    <option value="Plein">Plein (100%)</option>
+                    <option value="3/4">3/4 Restant (75%)</option>
+                    <option value="2/4">2/4 Restant (50%)</option>
+                    <option value="1/4">1/4 Restant (25%)</option>
+                    <option value="Vide">Vide (0% - Sortie Définitive)</option>
                   </SelectInput>
+
+                  {/* POIDS MAJ EN TEMPS RÉEL DÈS QUE fillLevel CHANGE */}
+                  <div style={{ 
+                    marginTop: "8px", 
+                    padding: "8px 12px", 
+                    background: "#f1f5f9", 
+                    borderRadius: "6px", 
+                    fontSize: "13px", 
+                    color: "#334155", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "space-between" 
+                  }}>
+                    <span>Nouveau poids calculé :</span>
+                    <strong style={{ color: "#0f172a", fontSize: "14px" }}>{data.currentCalculatedWeight} kg</strong>
+                  </div>
                 </div>
-                {returnDetails.fillLevel !== "Vide" && (
+
+                {state.returnDetails.fillLevel !== "Vide" && (
                   <div style={{ background: "#f0fdf4", padding: "12px", borderRadius: "8px", marginBottom: "16px" }}>
                     <label style={{ color: "#166534" }}>Emplacement de Retour</label>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                      <SelectInput value={returnDetails.roomId} onChange={e => setReturnDetails({ ...returnDetails, roomId: Number(e.target.value), location: "A1" })}>{COLD_ROOMS.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}</SelectInput>
-                      <SelectInput value={returnDetails.location} onChange={e => setReturnDetails({ ...returnDetails, location: e.target.value })}>{modalRoomLocations.map(l => <option key={l} value={l}>{l}</option>)}</SelectInput>
+                      <SelectInput value={state.returnDetails.roomId} onChange={e => setters.setReturnDetails({ ...state.returnDetails, roomId: e.target.value, location: "A1" })}>
+                        {data.COLD_ROOMS.map(r => <option key={r._id} value={r._id}>{r.name}</option>)}
+                      </SelectInput>
+                      <SelectInput value={state.returnDetails.location} onChange={e => setters.setReturnDetails({ ...state.returnDetails, location: e.target.value })}>
+                        {data.modalRoomLocations.map(l => <option key={l} value={l}>{l}</option>)}
+                      </SelectInput>
                     </div>
                   </div>
                 )}
-                <div style={{ display: "flex", gap: "12px" }}><StyledButton type="button" onClick={() => setFinalizingPalox(null)}>Annuler</StyledButton><StyledButton type="submit" variant="success">Valider la Sortie</StyledButton></div>
+
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <StyledButton type="button" onClick={() => setters.setFinalizingPalox(null)}>Annuler</StyledButton>
+                  <StyledButton type="submit" variant="success">Valider la Sortie</StyledButton>
+                </div>
               </form>
             </ModalContent>
           </ModalOverlay>
         )}
 
-        {/* MODAL : CARTOGRAPHIE RAPIDE */}
-        {isPreviewingRoom && <RoomMapping activeRoom={activeRoom} currentRoomStockGrouped={currentRoomStockGrouped} onClose={() => setIsPreviewingRoom(false)} />}
+        {state.isPreviewingRoom && <RoomMapping activeRoom={data.activeRoom} currentRoomStockGrouped={data.currentRoomStockGrouped} onClose={() => setters.setIsPreviewingRoom(false)} />}
       </MainContent>
     </AppContainer>
   );

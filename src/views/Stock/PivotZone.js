@@ -1,169 +1,130 @@
-/**
- * ========================================================================
- * COMPOSANT ZONE PIVOT (PivotZone.js)
- * Optimisé pour le scroll fluide et l'interface tactile (Mobile/Tablette)
- * ========================================================================
- */
+// ======================================
+// COMPOSANT ZONE DE SORTIE (PivotZone.js)
+// ======================================
 import React from "react";
-import styled from "styled-components";
-import { ArrowRightLeft, AlertCircle, CheckCircle2, Truck, HardHat } from "lucide-react";
+import styled, { keyframes } from "styled-components";
+import { Truck, ArrowRightCircle } from "lucide-react";
 
 // ======================================
-// STYLED COMPONENTS (Optimisés Mobile)
+// STYLED COMPONENTS DÉDIÉS
 // ======================================
-const ZoneContainer = styled.section`
-  margin-top: 24px;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  /* Assure une bonne gestion tactile */
-  touch-action: pan-y;
-  overscroll-behavior-y: contain; 
+const pulseAnimation = keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 `;
 
-const Header = styled.header`
-  background: #0f172a;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-
+const PreparationZone = styled.section`
+  margin-top: 32px;
+  background: #fff1f2;
+  border-radius: 14px;
+  border: 1px dashed #f43f5e;
+  padding: 20px;
+  
   h3 {
-    margin: 0;
+    margin: 0 0 16px 0;
     font-size: 16px;
     font-weight: 700;
-    color: #f8fafc;
+    color: #9f1239;
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
-
-  .counter {
-    background: #2563eb;
-    color: #ffffff;
-    font-size: 12px;
-    padding: 2px 10px;
-    border-radius: 99px;
+    gap: 8px;
   }
 `;
 
-const KanbanGrid = styled.div`
+const ProcessingGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr; /* 1 colonne sur mobile */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
+`;
+
+const ProcessingItem = styled.div`
+  background: white;
+  border: 1px solid #fecdd3;
+  border-radius: 10px;
   padding: 16px;
-  background: #f8fafc;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  animation: ${pulseAnimation} 2s infinite;
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    
+    strong { color: #881337; font-size: 15px; }
+    span { 
+      font-size: 11px; 
+      font-weight: 700; 
+      background: #ffe4e6; 
+      color: #e11d48; 
+      padding: 4px 8px; 
+      border-radius: 6px; 
+    }
+  }
 
-  @media(min-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  .details {
+    font-size: 13px;
+    color: #4c1d95;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 `;
 
-const TaskCard = styled.article`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-left: 6px solid ${props => props.$productColor || "#94a3b8"};
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.1s ease;
-
-  &:active {
-    transform: scale(0.99); /* Feedback tactile immédiat */
-  }
-`;
-
-const CardBody = styled.div`
-  padding: 16px;
-
-  .barcode {
-    font-family: monospace;
-    font-size: 15px;
-    font-weight: 800;
-    color: #0f172a;
-  }
-
-  .details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #f1f5f9;
-  }
-
-  .detail-item {
-    dt { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
-    dd { margin: 0; font-size: 14px; font-weight: 700; color: #1e293b; }
-  }
-`;
-
-const DispatchButton = styled.button`
-  width: 100%;
+const ActionButton = styled.button`
   border: none;
-  background: #059669;
-  color: white;
-  padding: 16px; /* Bouton très large pour éviter les erreurs de clic */
-  font-size: 15px;
-  font-weight: 800;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  border-radius: 0 0 12px 12px;
-
-  &:active { background: #047857; }
+  gap: 6px;
+  width: 100%;
+  background: #e11d48;
+  color: white;
+  transition: background 0.2s;
+  
+  &:hover { background: #be123c; }
 `;
 
-export default function PivotZone({ processingPaloxList = [], onFinalize }) {
-  const hasTasks = processingPaloxList.length > 0;
+// ======================================
+// COMPOSANT PRINCIPAL
+// ======================================
+export default function PivotZone({ processingPaloxList, onFinalize }) {
+  if (!processingPaloxList || processingPaloxList.length === 0) {
+    return null; // On n'affiche la zone que s'il y a des palox en cours de sortie
+  }
 
   return (
-    <ZoneContainer>
-      <Header>
-        <h3>
-          <ArrowRightLeft size={20} />
-          Quai de Transit
-        </h3>
-        {hasTasks && <span className="counter">{processingPaloxList.length}</span>}
-      </Header>
-
-      {!hasTasks ? (
-        <div style={{ padding: "40px 20px", textAlign: "center", color: "#94a3b8", fontSize: "14px" }}>
-          <CheckCircle2 size={32} style={{ margin: "0 auto 12px" }} />
-          Zone libre de toute tâche.
-        </div>
-      ) : (
-        <KanbanGrid>
-          {processingPaloxList.map((item) => (
-            <TaskCard key={item.id} $productColor={item.productDetails?.color}>
-              <CardBody>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span className="barcode">{item.barcode}</span>
-                  <span style={{ fontSize: "11px", fontWeight: "700", color: "#475569", background: "#e2e8f0", padding: "2px 8px", borderRadius: "6px" }}>
-                    {item.supplierId}
-                  </span>
-                </div>
-                <div style={{ fontSize: "16px", fontWeight: "800", marginTop: "8px" }}>
-                  {item.productDetails?.icon} {item.productDetails?.name}
-                </div>
-                <dl className="details-grid">
-                  <div className="detail-item"><dt>Calibre</dt><dd>{item.caliber}</dd></div>
-                  <div className="detail-item"><dt>Poids</dt><dd>{item.weight} kg</dd></div>
-                </dl>
-              </CardBody>
-              <DispatchButton onClick={() => onFinalize(item)}>
-                <Truck size={20} />
-                Valider l'expédition
-              </DispatchButton>
-            </TaskCard>
-          ))}
-        </KanbanGrid>
-      )}
-    </ZoneContainer>
+    <PreparationZone>
+      <h3><Truck size={18} /> Zone de Préparation (Sorties en cours)</h3>
+      <ProcessingGrid>
+        {processingPaloxList.map(item => (
+          // Utilisation de _id généré par MongoDB comme clé unique
+          <ProcessingItem key={item._id}>
+            <div className="header">
+              <strong>{item.barcode}</strong>
+              <span>En cours</span>
+            </div>
+            
+            <div className="details">
+              {item.productDetails?.icon} 
+              {item.productDetails?.name} 
+              ({item.caliber})
+            </div>
+            
+            <ActionButton onClick={() => onFinalize(item)}>
+              <ArrowRightCircle size={16} /> Finaliser la Sortie
+            </ActionButton>
+          </ProcessingItem>
+        ))}
+      </ProcessingGrid>
+    </PreparationZone>
   );
 }
