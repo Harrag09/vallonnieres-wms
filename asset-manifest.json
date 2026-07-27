@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/vallonnieres-wms/static/css/main.0951ebc1.css",
-    "main.js": "/vallonnieres-wms/static/js/main.d82a95af.js",
+    "main.js": "/vallonnieres-wms/static/js/main.e881a82c.js",
     "static/js/239.f026d730.chunk.js": "/vallonnieres-wms/static/js/239.f026d730.chunk.js",
     "static/js/213.25790f8c.chunk.js": "/vallonnieres-wms/static/js/213.25790f8c.chunk.js",
     "static/js/455.fd5827b8.chunk.js": "/vallonnieres-wms/static/js/455.fd5827b8.chunk.js",
@@ -14,13 +14,13 @@
     "static/media/ticket.png": "/vallonnieres-wms/static/media/ticket.5584081fd12591cce755.png",
     "index.html": "/vallonnieres-wms/index.html",
     "main.0951ebc1.css.map": "/vallonnieres-wms/static/css/main.0951ebc1.css.map",
-    "main.d82a95af.js.map": "/vallonnieres-wms/static/js/main.d82a95af.js.map",
+    "main.e881a82c.js.map": "/vallonnieres-wms/static/js/main.e881a82c.js.map",
     "239.f026d730.chunk.js.map": "/vallonnieres-wms/static/js/239.f026d730.chunk.js.map",
     "213.25790f8c.chunk.js.map": "/vallonnieres-wms/static/js/213.25790f8c.chunk.js.map",
     "455.fd5827b8.chunk.js.map": "/vallonnieres-wms/static/js/455.fd5827b8.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0951ebc1.css",
-    "static/js/main.d82a95af.js"
+    "static/js/main.e881a82c.js"
   ]
 }
