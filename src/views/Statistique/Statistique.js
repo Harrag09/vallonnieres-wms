@@ -66,7 +66,7 @@ const Container = styled.div`
     }
 
     @media (max-width: 768px) {
-        padding: 12px 10px;
+        padding: 16px 12px 90px 12px; /* Espace en bas pour éviter que le contenu soit caché par la barre mobile */
     }
 `;
 
@@ -389,7 +389,8 @@ const Table = styled.table`
     tr:hover td { background: #F8FAFC; }
 `;
 
-const TabNav = styled.div`
+// Desktop Navigation Tabs
+const DesktopTabNav = styled.div`
     display: flex;
     gap: 8px;
     margin-bottom: 24px;
@@ -397,10 +398,9 @@ const TabNav = styled.div`
     padding-bottom: 4px;
     overflow-x: auto;
     white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
 
-    &::-webkit-scrollbar {
-        display: none;
+    @media (max-width: 768px) {
+        display: none; /* Caché sur mobile au profit de la barre inférieure */
     }
 `;
 
@@ -421,6 +421,46 @@ const TabButton = styled.button`
     transition: all 0.2s ease;
 
     &:hover { color: ${THEME.primary}; }
+`;
+
+// Mobile Bottom Navigation Bar (Design Spécial Mobile Efficace)
+const MobileBottomNav = styled.div`
+    display: none;
+
+    @media (max-width: 768px) {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: ${THEME.cardBg};
+        border-top: 1px solid ${THEME.border};
+        padding: 8px 12px;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    }
+`;
+
+const MobileNavItem = styled.button`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    font-size: 10px;
+    font-weight: 700;
+    color: ${props => props.active ? THEME.primary : THEME.textMuted};
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+
+    svg {
+        stroke-width: ${props => props.active ? 2.5 : 1.8};
+    }
 `;
 
 // Helper for dynamic threshold colors (<5 Red, <10 Yellow, <15 Blue, else Green)
@@ -718,8 +758,8 @@ export default function Statistique() {
                 )}
             </FilterCard>
 
-            {/* NAVIGATION TABS */}
-            <TabNav>
+            {/* DESKTOP NAVIGATION TABS (PC & Tablettes) */}
+            <DesktopTabNav>
                 <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
                     <BarChart2 size={15} /> Dashboard Analytics
                 </TabButton>
@@ -732,7 +772,27 @@ export default function Statistique() {
                 <TabButton active={activeTab === "table"} onClick={() => setActiveTab("table")}>
                     <List size={15} /> Registre Palox ({paloxList.length})
                 </TabButton>
-            </TabNav>
+            </DesktopTabNav>
+
+            {/* MOBILE BOTTOM NAVIGATION BAR (Design Spécial Mobile Efficace en bas de l'écran) */}
+            <MobileBottomNav>
+                <MobileNavItem active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
+                    <BarChart2 size={20} />
+                    <span>Dashboard</span>
+                </MobileNavItem>
+                <MobileNavItem active={activeTab === "matrix"} onClick={() => setActiveTab("matrix")}>
+                    <Grid size={20} />
+                    <span>Matrice</span>
+                </MobileNavItem>
+                <MobileNavItem active={activeTab === "iot"} onClick={() => setActiveTab("iot")}>
+                    <Zap size={20} />
+                    <span>IoT</span>
+                </MobileNavItem>
+                <MobileNavItem active={activeTab === "table"} onClick={() => setActiveTab("table")}>
+                    <List size={20} />
+                    <span>Registre ({paloxList.length})</span>
+                </MobileNavItem>
+            </MobileBottomNav>
 
             {isLoading ? (
                 <div style={{ display: "flex", justifyContent: "center", padding: "80px 0" }}>
