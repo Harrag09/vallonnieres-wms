@@ -44,14 +44,13 @@ const THEME = {
     textMuted: "#64748B",
     border: "#E2E8F0",
     shadowSm: "0 1px 3px rgba(0,0,0,0.05)",
-    shadowMd: "0 10px 25px -5px rgba(99, 102, 241, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)",
-    shadowLg: "0 20px 30px -10px rgba(15, 23, 42, 0.08)"
+    shadowMd: "0 10px 25px -5px rgba(99, 102, 241, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)"
 };
 
 const CHART_COLORS = ["#6366F1", "#0EA5E9", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#14B8A6", "#EF4444"];
 
 // ======================================================
-// STYLED COMPONENTS
+// STYLED COMPONENTS (RESPONSIVE)
 // ======================================================
 
 const Container = styled.div`
@@ -60,9 +59,14 @@ const Container = styled.div`
     padding: 32px 40px;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     color: ${THEME.dark};
+    box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        padding: 24px 20px;
+    }
 
     @media (max-width: 768px) {
-        padding: 16px;
+        padding: 12px 10px;
     }
 `;
 
@@ -76,19 +80,23 @@ const Header = styled.div`
 
     .title-group {
         h1 {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             margin: 0;
             color: ${THEME.dark};
             letter-spacing: -0.8px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+
+            @media (max-width: 768px) {
+                font-size: 20px;
+            }
         }
         p {
             margin: 6px 0 0 0;
             color: ${THEME.textMuted};
-            font-size: 14px;
+            font-size: 13px;
         }
     }
 `;
@@ -101,18 +109,25 @@ const FilterCard = styled(motion.div)`
     box-shadow: ${THEME.shadowSm};
     margin-bottom: 28px;
 
+    @media (max-width: 768px) {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
     .filter-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 10px;
 
         .title {
             display: flex;
             align-items: center;
             gap: 8px;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 12px;
             color: ${THEME.dark};
             text-transform: uppercase;
             letter-spacing: 0.8px;
@@ -122,9 +137,13 @@ const FilterCard = styled(motion.div)`
 
 const FilterGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 14px;
     align-items: flex-end;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 const FormGroup = styled.div`
@@ -153,6 +172,7 @@ const FormGroup = styled.div`
         font-weight: 600;
         color: ${THEME.dark};
         outline: none;
+        box-sizing: border-box;
         transition: all 0.2s ease;
 
         &:focus {
@@ -175,6 +195,11 @@ const CalibrePillGroup = styled.div`
         font-weight: 700;
         color: ${THEME.textMuted};
         margin-right: 4px;
+        width: 100%;
+
+        @media (min-width: 768px) {
+            width: auto;
+        }
     }
 `;
 
@@ -200,7 +225,7 @@ const Button = styled(motion.button)`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 11px 20px;
+    padding: 11px 18px;
     border-radius: 12px;
     font-size: 13px;
     font-weight: 700;
@@ -225,14 +250,18 @@ const Button = styled(motion.button)`
 
 const StatsGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
     margin-bottom: 28px;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 const StatCard = styled(motion.div)`
     background: ${THEME.cardBg};
-    padding: 22px;
+    padding: 20px;
     border-radius: 20px;
     border: 1px solid ${THEME.border};
     box-shadow: ${THEME.shadowSm};
@@ -242,14 +271,14 @@ const StatCard = styled(motion.div)`
 
     .info {
         .label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: ${THEME.textMuted};
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .value {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             color: ${THEME.dark};
             margin: 6px 0 4px 0;
@@ -265,8 +294,8 @@ const StatCard = styled(motion.div)`
     }
 
     .icon-box {
-        width: 48px;
-        height: 48px;
+        width: 44px;
+        height: 44px;
         border-radius: 14px;
         display: flex;
         align-items: center;
@@ -293,15 +322,23 @@ const Panel = styled.div`
     padding: 24px;
     border: 1px solid ${THEME.border};
     box-shadow: ${THEME.shadowSm};
+    overflow: hidden;
+
+    @media (max-width: 768px) {
+        padding: 16px;
+        border-radius: 14px;
+    }
 
     .panel-head {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 8px;
 
         h3 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             color: ${THEME.dark};
             margin: 0;
@@ -317,9 +354,16 @@ const Panel = styled.div`
     }
 `;
 
+const TableWrapper = styled.div`
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+`;
+
 const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
+    min-width: 600px;
 
     th {
         text-align: left;
@@ -330,14 +374,16 @@ const Table = styled.table`
         font-weight: 800;
         text-transform: uppercase;
         border-bottom: 1px solid ${THEME.border};
+        white-space: nowrap;
     }
 
     td {
-        padding: 16px 18px;
+        padding: 14px 18px;
         border-bottom: 1px solid ${THEME.border};
         font-size: 13px;
         font-weight: 600;
         color: ${THEME.dark};
+        white-space: nowrap;
     }
 
     tr:hover td { background: #F8FAFC; }
@@ -345,25 +391,33 @@ const Table = styled.table`
 
 const TabNav = styled.div`
     display: flex;
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 24px;
     border-bottom: 2px solid ${THEME.border};
     padding-bottom: 4px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const TabButton = styled.button`
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
+    padding: 10px 16px;
     border: none;
     background: transparent;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: ${props => props.active ? THEME.primary : THEME.textMuted};
     border-bottom: 3px solid ${props => props.active ? THEME.primary : "transparent"};
     cursor: pointer;
     margin-bottom: -6px;
+    flex-shrink: 0;
     transition: all 0.2s ease;
 
     &:hover { color: ${THEME.primary}; }
@@ -394,7 +448,7 @@ export default function Statistique() {
     const [globalSearch, setGlobalSearch] = useState("");
     const [productSearch, setProductSearch] = useState("");
     const [selectedRoom, setSelectedRoom] = useState("");
-    const [caliberSearch, setCaliberSearch] = useState("");
+    const [caliberSearch, setCalibreSearch] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
@@ -463,7 +517,7 @@ export default function Statistique() {
         setGlobalSearch("");
         setProductSearch("");
         setSelectedRoom("");
-        setCaliberSearch("");
+        setCalibreSearch("");
         setStartDate("");
         setEndDate("");
     };
@@ -519,7 +573,7 @@ export default function Statistique() {
 
         const roomStats = Object.keys(roomMap).map(name => ({ name, weight: roomMap[name] }));
 
-        // Product by Caliber Breakdown (Stacked Bar Chart Dataset for Dashboard)
+        // Product by Calibre Breakdown (Stacked Bar Chart Dataset for Dashboard)
         const productCaliberMap = {};
         const calibersSet = new Set();
 
@@ -565,11 +619,11 @@ export default function Statistique() {
             {/* HEADER */}
             <Header>
                 <div className="title-group">
-                    <h1><Sparkles size={28} color={THEME.primary} /> Tableau de Bord Analytique</h1>
+                    <h1><Sparkles size={24} color={THEME.primary} /> Tableau de Bord Analytique</h1>
                     <p>Pilotage intelligent du stock, suivi de volume et filtrage par calibre</p>
                 </div>
                 <Button className="primary" onClick={handleExportCSV} whileHover={{ scale: 1.02 }}>
-                    <Download size={16} /> Exporter Rapport CSV
+                    <Download size={15} /> Exporter Rapport CSV
                 </Button>
             </Header>
 
@@ -577,16 +631,16 @@ export default function Statistique() {
             <FilterCard initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="filter-header">
                     <div className="title">
-                        <Sliders size={16} color={THEME.primary} /> Filtres Dynamiques de Recherche
+                        <Sliders size={15} color={THEME.primary} /> Filtres Dynamiques de Recherche
                     </div>
                     <Button className="secondary" onClick={handleResetFilters}>
-                        <RotateCcw size={14} /> Réinitialiser
+                        <RotateCcw size={13} /> Réinitialiser
                     </Button>
                 </div>
 
                 <FilterGrid>
                     <FormGroup>
-                        <label><Search size={12} /> Recherche globale</label>
+                        <label><Search size={11} /> Recherche globale</label>
                         <input 
                             type="text" 
                             placeholder="Code-barres, ID..." 
@@ -596,7 +650,7 @@ export default function Statistique() {
                     </FormGroup>
 
                     <FormGroup>
-                        <label><Tag size={12} /> Produit / Variété</label>
+                        <label><Tag size={11} /> Produit / Variété</label>
                         <input 
                             type="text" 
                             list="products-datalist"
@@ -611,8 +665,8 @@ export default function Statistique() {
 
                     {/* SELECTEUR CALIBRE */}
                     <FormGroup>
-                        <label><Layers size={12} /> Calibre Spécifique</label>
-                        <select value={caliberSearch} onChange={(e) => setCaliberSearch(e.target.value)}>
+                        <label><Layers size={11} /> Calibre Spécifique</label>
+                        <select value={caliberSearch} onChange={(e) => setCalibreSearch(e.target.value)}>
                             <option value="">Tous les calibres</option>
                             {availableCalibers.map((cal, idx) => (
                                 <option key={idx} value={cal}>Calibre {cal}</option>
@@ -621,7 +675,7 @@ export default function Statistique() {
                     </FormGroup>
 
                     <FormGroup>
-                        <label><Warehouse size={12} /> Chambre Froide</label>
+                        <label><Warehouse size={11} /> Chambre Froide</label>
                         <select value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
                             <option value="">Toutes les chambres</option>
                             {roomsList.map(r => (
@@ -631,12 +685,12 @@ export default function Statistique() {
                     </FormGroup>
 
                     <FormGroup>
-                        <label><Calendar size={12} /> Date Début</label>
+                        <label><Calendar size={11} /> Date Début</label>
                         <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     </FormGroup>
 
                     <FormGroup>
-                        <label><Calendar size={12} /> Date Fin</label>
+                        <label><Calendar size={11} /> Date Fin</label>
                         <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </FormGroup>
                 </FilterGrid>
@@ -647,7 +701,7 @@ export default function Statistique() {
                         <span className="chip-label">Sélecteur rapide de Calibre :</span>
                         <CalibreChip 
                             active={caliberSearch === ""} 
-                            onClick={() => setCaliberSearch("")}
+                            onClick={() => setCalibreSearch("")}
                         >
                             Tous ({paloxList.length})
                         </CalibreChip>
@@ -655,7 +709,7 @@ export default function Statistique() {
                             <CalibreChip 
                                 key={i} 
                                 active={caliberSearch === cal} 
-                                onClick={() => setCaliberSearch(cal)}
+                                onClick={() => setCalibreSearch(cal)}
                             >
                                 Calibre {cal}
                             </CalibreChip>
@@ -667,26 +721,26 @@ export default function Statistique() {
             {/* NAVIGATION TABS */}
             <TabNav>
                 <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
-                    <BarChart2 size={16} /> Dashboard Analytics
+                    <BarChart2 size={15} /> Dashboard Analytics
                 </TabButton>
                 <TabButton active={activeTab === "matrix"} onClick={() => setActiveTab("matrix")}>
-                    <Grid size={16} /> Matrice Calibres & Seuils
+                    <Grid size={15} /> Matrice Calibres & Seuils
                 </TabButton>
                 <TabButton active={activeTab === "iot"} onClick={() => setActiveTab("iot")}>
-                    <Zap size={16} /> Telemétrie IoT
+                    <Zap size={15} /> Telemétrie IoT
                 </TabButton>
                 <TabButton active={activeTab === "table"} onClick={() => setActiveTab("table")}>
-                    <List size={16} /> Registre Palox ({paloxList.length})
+                    <List size={15} /> Registre Palox ({paloxList.length})
                 </TabButton>
             </TabNav>
 
             {isLoading ? (
                 <div style={{ display: "flex", justifyContent: "center", padding: "80px 0" }}>
-                    <ReactLoading type="spinningBubbles" color={THEME.primary} height={60} width={60} />
+                    <ReactLoading type="spinningBubbles" color={THEME.primary} height={50} width={50} />
                 </div>
             ) : (
                 <AnimatePresence mode="wait">
-                    {/* TAB 1: OVERVIEW (DASHBOARD WITH OLD CHARTS + STACKED PRODUCT/CALIBRE) */}
+                    {/* TAB 1: OVERVIEW */}
                     {activeTab === "overview" && (
                         <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                             {/* KPIS */}
@@ -695,36 +749,36 @@ export default function Statistique() {
                                     <div className="info">
                                         <div className="label">Total Palox</div>
                                         <div className="value">{analytics.totalCount}</div>
-                                        <div className="sub"><ShieldCheck size={14} /> Unités enregistrées</div>
+                                        <div className="sub"><ShieldCheck size={13} /> Unités enregistrées</div>
                                     </div>
-                                    <div className="icon-box"><Package size={22} /></div>
+                                    <div className="icon-box"><Package size={20} /></div>
                                 </StatCard>
 
                                 <StatCard bg={THEME.successLight} color={THEME.success} whileHover={{ y: -3 }}>
                                     <div className="info">
                                         <div className="label">Tonnage Global</div>
                                         <div className="value">{(analytics.totalWeight / 1000).toFixed(2)} T</div>
-                                        <div className="sub"><ArrowUpRight size={14} /> {analytics.totalWeight.toLocaleString()} kg</div>
+                                        <div className="sub"><ArrowUpRight size={13} /> {analytics.totalWeight.toLocaleString()} kg</div>
                                     </div>
-                                    <div className="icon-box" style={{ background: THEME.successLight, color: THEME.success }}><Scale size={22} /></div>
+                                    <div className="icon-box" style={{ background: THEME.successLight, color: THEME.success }}><Scale size={20} /></div>
                                 </StatCard>
 
                                 <StatCard bg={THEME.secondaryLight} color={THEME.secondary} whileHover={{ y: -3 }}>
                                     <div className="info">
                                         <div className="label">Poids Moyen / Palox</div>
                                         <div className="value">{analytics.avgWeight} kg</div>
-                                        <div className="sub"><CheckCircle2 size={14} /> Charge optimale</div>
+                                        <div className="sub"><CheckCircle2 size={13} /> Charge optimale</div>
                                     </div>
-                                    <div className="icon-box" style={{ background: THEME.secondaryLight, color: THEME.secondary }}><Layers size={22} /></div>
+                                    <div className="icon-box" style={{ background: THEME.secondaryLight, color: THEME.secondary }}><Layers size={20} /></div>
                                 </StatCard>
 
                                 <StatCard bg={THEME.purpleLight} color={THEME.purple} whileHover={{ y: -3 }}>
                                     <div className="info">
                                         <div className="label">Variétés Distinctes</div>
                                         <div className="value">{analytics.productStats.length}</div>
-                                        <div className="sub"><Tag size={14} /> Actives en stock</div>
+                                        <div className="sub"><Tag size={13} /> Actives en stock</div>
                                     </div>
-                                    <div className="icon-box" style={{ background: THEME.purpleLight, color: THEME.purple }}><Activity size={22} /></div>
+                                    <div className="icon-box" style={{ background: THEME.purpleLight, color: THEME.purple }}><Activity size={20} /></div>
                                 </StatCard>
                             </StatsGrid>
 
@@ -733,10 +787,10 @@ export default function Statistique() {
                                 {/* MASSE PAR CHAMBRE FROIDE */}
                                 <Panel>
                                     <div className="panel-head">
-                                        <h3><Warehouse size={18} color={THEME.primary} /> Masse par Chambre Froide (kg)</h3>
-                                        <span>Volume global stocké</span>
+                                        <h3><Warehouse size={16} color={THEME.primary} /> Masse par Chambre Froide (kg)</h3>
+                                        <span>Volume global</span>
                                     </div>
-                                    <ResponsiveContainer width="100%" height={280}>
+                                    <ResponsiveContainer width="100%" height={260}>
                                         <BarChart data={analytics.roomStats}>
                                             <defs>
                                                 <linearGradient id="barRoomGrad" x1="0" y1="0" x2="0" y2="1">
@@ -745,8 +799,8 @@ export default function Statistique() {
                                                 </linearGradient>
                                             </defs>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={THEME.border} />
-                                            <XAxis dataKey="name" stroke={THEME.textMuted} tickLine={false} />
-                                            <YAxis stroke={THEME.textMuted} axisLine={false} tickLine={false} />
+                                            <XAxis dataKey="name" stroke={THEME.textMuted} tickLine={false} tick={{ fontSize: 11 }} />
+                                            <YAxis stroke={THEME.textMuted} axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
                                             <RechartsTooltip 
                                                 content={({ active, payload }) => {
                                                     if (active && payload && payload.length) {
@@ -761,7 +815,7 @@ export default function Statistique() {
                                                     return null;
                                                 }}
                                             />
-                                            <Bar dataKey="weight" fill="url(#barRoomGrad)" radius={[8, 8, 0, 0]} barSize={40} />
+                                            <Bar dataKey="weight" fill="url(#barRoomGrad)" radius={[8, 8, 0, 0]} barSize={35} />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </Panel>
@@ -769,10 +823,10 @@ export default function Statistique() {
                                 {/* REPARTITION PAR VARIETE (DONUT CHART) */}
                                 <Panel>
                                     <div className="panel-head">
-                                        <h3><Tag size={18} color={THEME.secondary} /> Part de Stock par Variété</h3>
-                                        <span>Proportions du tonnage total</span>
+                                        <h3><Tag size={16} color={THEME.secondary} /> Part de Stock par Variété</h3>
+                                        <span>Proportions</span>
                                     </div>
-                                    <ResponsiveContainer width="100%" height={280}>
+                                    <ResponsiveContainer width="100%" height={260}>
                                         <PieChart>
                                             <Pie
                                                 data={analytics.productStats}
@@ -780,8 +834,8 @@ export default function Statistique() {
                                                 nameKey="name"
                                                 cx="50%"
                                                 cy="50%"
-                                                innerRadius={65}
-                                                outerRadius={95}
+                                                innerRadius={55}
+                                                outerRadius={85}
                                                 paddingAngle={4}
                                             >
                                                 {analytics.productStats.map((entry, index) => (
@@ -810,7 +864,7 @@ export default function Statistique() {
                             {/* OLD DASHBOARD CHART: MASSE PAR PRODUIT & CALIBRE */}
                             <Panel style={{ marginBottom: 28 }}>
                                 <div className="panel-head">
-                                    <h3><Layers size={18} color={THEME.purple} /> Masse par Produit & Calibre (kg)</h3>
+                                    <h3><Layers size={16} color={THEME.purple} /> Masse par Produit & Calibre (kg)</h3>
                                     <span>Répartition détaillée du poids par variété et calibre</span>
                                 </div>
                                 {analytics.productCaliberStats.length === 0 ? (
@@ -818,11 +872,11 @@ export default function Statistique() {
                                         Aucune donnée disponible pour les calibres.
                                     </div>
                                 ) : (
-                                    <ResponsiveContainer width="100%" height={320}>
+                                    <ResponsiveContainer width="100%" height={300}>
                                         <BarChart data={analytics.productCaliberStats}>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={THEME.border} />
-                                            <XAxis dataKey="name" stroke={THEME.textMuted} tickLine={false} />
-                                            <YAxis stroke={THEME.textMuted} axisLine={false} tickLine={false} />
+                                            <XAxis dataKey="name" stroke={THEME.textMuted} tickLine={false} tick={{ fontSize: 11 }} />
+                                            <YAxis stroke={THEME.textMuted} axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
                                             <RechartsTooltip 
                                                 content={({ active, payload, label }) => {
                                                     if (active && payload && payload.length) {
@@ -849,7 +903,7 @@ export default function Statistique() {
                                                     stackId="a" 
                                                     fill={CHART_COLORS[index % CHART_COLORS.length]} 
                                                     radius={index === analytics.activeCalibers.length - 1 ? [6, 6, 0, 0] : [0, 0, 0, 0]}
-                                                    barSize={38}
+                                                    barSize={32}
                                                 />
                                             ))}
                                         </BarChart>
@@ -864,63 +918,65 @@ export default function Statistique() {
                         <motion.div key="matrix" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                             <Panel>
                                 <div className="panel-head">
-                                    <h3><Layers size={18} color={THEME.primary} /> Suivi des Palox par Produit & Calibre (Seuils Couleur)</h3>
-                                    <span>Légende : &lt;5 en Rouge | &lt;10 en Jaune | &lt;15 en Bleu | 15+ en Vert</span>
+                                    <h3><Layers size={16} color={THEME.primary} /> Suivi des Palox par Produit & Calibre (Seuils Couleur)</h3>
+                                    <span>&lt;5 Rouge | &lt;10 Jaune | &lt;15 Bleu | 15+ Vert</span>
                                 </div>
-                                <Table>
-                                    <thead>
-                                        <tr>
-                                            <th>Variété / Produit</th>
-                                            <th>Calibre</th>
-                                            <th>Nombre de Palox</th>
-                                            <th>Poids Total Cumulé</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {analytics.caliberMatrixRows.length === 0 ? (
+                                <TableWrapper>
+                                    <Table>
+                                        <thead>
                                             <tr>
-                                                <td colSpan="4" style={{ textAlign: "center", padding: 40, color: THEME.textMuted }}>
-                                                    <AlertTriangle size={24} color={THEME.warning} style={{ marginBottom: 8 }} />
-                                                    <div>Aucune donnée de calibre disponible.</div>
-                                                </td>
+                                                <th>Variété / Produit</th>
+                                                <th>Calibre</th>
+                                                <th>Nombre de Palox</th>
+                                                <th>Poids Total Cumulé</th>
                                             </tr>
-                                        ) : (
-                                            analytics.caliberMatrixRows.map((row, idx) => {
-                                                const styleInfo = getPaloxCountStyle(row.paloxCount);
-                                                return (
-                                                    <tr key={idx}>
-                                                        <td>
-                                                            <strong style={{ color: THEME.dark, fontSize: 14 }}>{row.product}</strong>
-                                                        </td>
-                                                        <td>
-                                                            <span style={{ padding: "4px 12px", background: THEME.primaryLight, color: THEME.primary, borderRadius: 8, fontSize: 12, fontWeight: 800 }}>
-                                                                Calibre {row.caliber}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <span style={{
-                                                                display: "inline-flex",
-                                                                alignItems: "center",
-                                                                gap: 6,
-                                                                padding: "6px 14px",
-                                                                borderRadius: "20px",
-                                                                fontSize: 13,
-                                                                fontWeight: 800,
-                                                                background: styleInfo.background,
-                                                                color: styleInfo.color
-                                                            }}>
-                                                                📦 {row.paloxCount} palox
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <strong style={{ fontSize: 13 }}>{row.totalWeight.toLocaleString()} kg</strong>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })
-                                        )}
-                                    </tbody>
-                                </Table>
+                                        </thead>
+                                        <tbody>
+                                            {analytics.caliberMatrixRows.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan="4" style={{ textAlign: "center", padding: 40, color: THEME.textMuted }}>
+                                                        <AlertTriangle size={22} color={THEME.warning} style={{ marginBottom: 8 }} />
+                                                        <div>Aucune donnée de calibre disponible.</div>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                analytics.caliberMatrixRows.map((row, idx) => {
+                                                    const styleInfo = getPaloxCountStyle(row.paloxCount);
+                                                    return (
+                                                        <tr key={idx}>
+                                                            <td>
+                                                                <strong style={{ color: THEME.dark, fontSize: 13 }}>{row.product}</strong>
+                                                            </td>
+                                                            <td>
+                                                                <span style={{ padding: "4px 10px", background: THEME.primaryLight, color: THEME.primary, borderRadius: 8, fontSize: 11, fontWeight: 800 }}>
+                                                                    Calibre {row.caliber}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span style={{
+                                                                    display: "inline-flex",
+                                                                    alignItems: "center",
+                                                                    gap: 6,
+                                                                    padding: "5px 12px",
+                                                                    borderRadius: "20px",
+                                                                    fontSize: 12,
+                                                                    fontWeight: 800,
+                                                                    background: styleInfo.background,
+                                                                    color: styleInfo.color
+                                                                }}>
+                                                                    📦 {row.paloxCount} palox
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <strong style={{ fontSize: 13 }}>{row.totalWeight.toLocaleString()} kg</strong>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })
+                                            )}
+                                        </tbody>
+                                    </Table>
+                                </TableWrapper>
                             </Panel>
                         </motion.div>
                     )}
@@ -928,33 +984,33 @@ export default function Statistique() {
                     {/* TAB 3: IOT TELEMETRY */}
                     {activeTab === "iot" && (
                         <motion.div key="iot" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
                                 {roomsList.map((room) => (
                                     <Panel key={room._id}>
                                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                                            <h3 style={{ margin: 0, fontSize: 16, display: "flex", alignItems: "center", gap: 8 }}>
-                                                <Warehouse size={18} color={THEME.primary} /> {room.name}
+                                            <h3 style={{ margin: 0, fontSize: 15, display: "flex", alignItems: "center", gap: 8 }}>
+                                                <Warehouse size={16} color={THEME.primary} /> {room.name}
                                             </h3>
-                                            <span style={{ fontSize: 10, background: THEME.successLight, color: THEME.success, padding: "3px 10px", borderRadius: 12, fontWeight: 800 }}>
+                                            <span style={{ fontSize: 10, background: THEME.successLight, color: THEME.success, padding: "3px 8px", borderRadius: 10, fontWeight: 800 }}>
                                                 EN SERVICE
                                             </span>
                                         </div>
-                                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                                            <div style={{ padding: 14, background: "#F8FAFC", borderRadius: 12, border: `1px solid ${THEME.border}` }}>
+                                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                                            <div style={{ padding: 12, background: "#F8FAFC", borderRadius: 12, border: `1px solid ${THEME.border}` }}>
                                                 <div style={{ fontSize: 11, color: THEME.textMuted, fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
-                                                    <Thermometer size={14} color={THEME.danger} /> Température
+                                                    <Thermometer size={13} color={THEME.danger} /> Température
                                                 </div>
-                                                <strong style={{ fontSize: 22, color: THEME.dark, marginTop: 6, display: "block" }}>1.8 °C</strong>
+                                                <strong style={{ fontSize: 20, color: THEME.dark, marginTop: 4, display: "block" }}>1.8 °C</strong>
                                             </div>
-                                            <div style={{ padding: 14, background: "#F8FAFC", borderRadius: 12, border: `1px solid ${THEME.border}` }}>
+                                            <div style={{ padding: 12, background: "#F8FAFC", borderRadius: 12, border: `1px solid ${THEME.border}` }}>
                                                 <div style={{ fontSize: 11, color: THEME.textMuted, fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
-                                                    <Droplets size={14} color={THEME.secondary} /> Humidité HR
+                                                    <Droplets size={13} color={THEME.secondary} /> Humidité HR
                                                 </div>
-                                                <strong style={{ fontSize: 22, color: THEME.dark, marginTop: 6, display: "block" }}>92 %</strong>
+                                                <strong style={{ fontSize: 20, color: THEME.dark, marginTop: 4, display: "block" }}>92 %</strong>
                                             </div>
                                         </div>
-                                        <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px stroke ${THEME.border}`, display: "flex", justifyContent: "space-between", fontSize: 12, color: THEME.textMuted, fontWeight: 600 }}>
-                                            <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Wind size={13} /> Ventilation: 85%</span>
+                                        <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${THEME.border}`, display: "flex", justifyContent: "space-between", fontSize: 12, color: THEME.textMuted, fontWeight: 600 }}>
+                                            <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Wind size={12} /> Ventilation: 85%</span>
                                             <span style={{ color: THEME.success }}>Consigne OK</span>
                                         </div>
                                     </Panel>
@@ -966,55 +1022,57 @@ export default function Statistique() {
                     {/* TAB 4: PALOX REGISTER */}
                     {activeTab === "table" && (
                         <motion.div key="table" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <Panel style={{ padding: 0, overflow: "hidden" }}>
-                                <Table>
-                                    <thead>
-                                        <tr>
-                                            <th>Code-Barres / ID</th>
-                                            <th>Variété / Produit</th>
-                                            <th>Chambre Froide</th>
-                                            <th>Calibre</th>
-                                            <th>Niveau Remplissage</th>
-                                            <th>Poids Net</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {paloxList.length === 0 ? (
+                            <Panel style={{ padding: 0 }}>
+                                <TableWrapper>
+                                    <Table>
+                                        <thead>
                                             <tr>
-                                                <td colSpan="6" style={{ textAlign: "center", padding: 40, color: THEME.textMuted }}>
-                                                    <AlertTriangle size={24} color={THEME.warning} style={{ marginBottom: 8 }} />
-                                                    <div>Aucun Palox ne correspond aux filtres sélectionnés.</div>
-                                                </td>
+                                                <th>Code-Barres / ID</th>
+                                                <th>Variété / Produit</th>
+                                                <th>Chambre Froide</th>
+                                                <th>Calibre</th>
+                                                <th>Niveau Remplissage</th>
+                                                <th>Poids Net</th>
                                             </tr>
-                                        ) : (
-                                            paloxList.map((item) => (
-                                                <tr key={item._id}>
-                                                    <td><strong>{item.barcode || `#${item._id.slice(-6)}`}</strong></td>
-                                                    <td><span style={{ color: THEME.primary, fontWeight: 700 }}>{item.productDetails?.name || "Non spécifié"}</span></td>
-                                                    <td>{item.roomDetails?.name || "Sans chambre"}</td>
-                                                    <td>
-                                                        <span style={{ padding: "4px 10px", background: THEME.primaryLight, color: THEME.primary, borderRadius: 8, fontSize: 12, fontWeight: 800 }}>
-                                                            {item.caliber || "N/A"}
-                                                        </span>
+                                        </thead>
+                                        <tbody>
+                                            {paloxList.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan="6" style={{ textAlign: "center", padding: 40, color: THEME.textMuted }}>
+                                                        <AlertTriangle size={22} color={THEME.warning} style={{ marginBottom: 8 }} />
+                                                        <div>Aucun Palox ne correspond aux filtres sélectionnés.</div>
                                                     </td>
-                                                    <td>
-                                                        <span style={{
-                                                            padding: "4px 10px",
-                                                            borderRadius: 8,
-                                                            fontSize: 11,
-                                                            fontWeight: 800,
-                                                            background: getFillLevelColor(item.fillLevel) + "20",
-                                                            color: getFillLevelColor(item.fillLevel)
-                                                        }}>
-                                                            {item.fillLevel || "Inconnu"}
-                                                        </span>
-                                                    </td>
-                                                    <td><strong>{item.weight} kg</strong></td>
                                                 </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </Table>
+                                            ) : (
+                                                paloxList.map((item) => (
+                                                    <tr key={item._id}>
+                                                        <td><strong>{item.barcode || `#${item._id.slice(-6)}`}</strong></td>
+                                                        <td><span style={{ color: THEME.primary, fontWeight: 700 }}>{item.productDetails?.name || "Non spécifié"}</span></td>
+                                                        <td>{item.roomDetails?.name || "Sans chambre"}</td>
+                                                        <td>
+                                                            <span style={{ padding: "4px 10px", background: THEME.primaryLight, color: THEME.primary, borderRadius: 8, fontSize: 11, fontWeight: 800 }}>
+                                                                {item.caliber || "N/A"}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span style={{
+                                                                padding: "4px 10px",
+                                                                borderRadius: 8,
+                                                                fontSize: 11,
+                                                                fontWeight: 800,
+                                                                background: getFillLevelColor(item.fillLevel) + "20",
+                                                                color: getFillLevelColor(item.fillLevel)
+                                                            }}>
+                                                                {item.fillLevel || "Inconnu"}
+                                                            </span>
+                                                        </td>
+                                                        <td><strong>{item.weight} kg</strong></td>
+                                                    </tr>
+                                                ))
+                                            )}
+                                        </tbody>
+                                    </Table>
+                                </TableWrapper>
                             </Panel>
                         </motion.div>
                     )}
