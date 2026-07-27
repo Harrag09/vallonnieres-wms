@@ -7,6 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useState } from "react";
 import Profil from "views/Profil";
 import Stock from "views/Stock/Stock";
+import Statistique from "views/Statistique/Statistique";
 const token = Cookies.get("access_token");
 const decoded = token ? jwtDecode(token) : "";
  const nm = Cookies.get("Name");
@@ -26,6 +27,14 @@ var routes = [
     name: "stock",
     icon: "nc-icon nc-bank",
     component: <Stock/>,
+    layout: "/admin",
+  },);
+   routes.push(
+  {
+    path: "/statistique",
+    name: "statistique",
+    icon: "nc-icon nc-bank",
+    component: <Statistique/>,
     layout: "/admin",
   },);
 if (decoded.Role=== "admin") {

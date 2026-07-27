@@ -1,9 +1,9 @@
 // Client-side (CategoriesServer.js)
 import axios from 'axios';
 
-// export const  Url =  'http://localhost:8002'
+export const  Url =  'http://localhost:8002'
 // export const  Url =  'http://192.168.21.79:8002'
-export const  Url =  'https://backendvergi.onrender.com'
+// export const  Url =  'https://backendvergi.onrender.com'
 
 // export const  Url =  'http://192.168.1.45:8002'
 //export const  Url =  'https://makseb.onrender.com';

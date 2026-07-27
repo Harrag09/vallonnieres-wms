@@ -92,7 +92,15 @@ export const getFillLevelColor = (fillLevel) => {
     default: return "#cbd5e1";        // Gris par défaut
   }
 };
-
+/**
+ * Renvoyer la couleur selon le nombre de Palox d'un produit
+ */
+export const getPaloxCountColor = (count) => {
+    if (count < 5) return "#EF4444";   // ROUGE (< 5 Palox)
+    if (count < 10) return "#10B981";  // VERT (< 10 Palox)
+    if (count < 20) return "#3B82F6";  // BLEU (< 20 Palox)
+    return "#8B5CF6";                  // VIOLET (>= 20 Palox)
+};
 // Données d'initialisation (Mock) intégrant la traçabilité fournisseur
 export const INITIAL_PALOX = [
   { id: "1705570001", barcode: "PLX-9001", supplierId: "SUP-01", productId: 1, caliber: "80-95g", coldRoomId: 1, location: "A1", size: "120/100", fillLevel: "Plein", weight: 280, status: "STORED", dateAdded: "2026-07-15" },

@@ -11,6 +11,27 @@ const StockServise = {
       throw error.response?.data?.error || error.message;
     }
   },
+  
+  getStockData: async () => {
+    try {
+      const response = await axios.get(`${Url}/stock/getStockData`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || error.message;
+    }
+  },
+
+  // ======================================================
+  // NOUVELLE METHODE POUR FETCH LES STATS AVEC FILTRES
+  // ======================================================
+  getStatistics: async (params) => {
+    try {
+      const response = await axios.get(`${Url}/stock/statistics`, { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || error.message;
+    }
+  },
 
   AjoutPalox: async (payload, userId, roomname) => {
     try {
