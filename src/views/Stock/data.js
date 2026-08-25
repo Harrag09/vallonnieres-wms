@@ -20,12 +20,13 @@ export const FOURNISSEURS = Object.freeze([
      { id: "04", name: "Bruno" },
       { id: "05", name: "Coco" },
      { id: "05", name: "cheillo" },
-
 ]);
+
 export const HISTORY_LOGS = [
   { action: "ENTRÉE", barcode: "PLX-1234", desc: "Réception initiale", timestamp: "08:00:00" },
   // ... vos données
 ]; 
+
 export const COLD_ROOMS = Object.freeze([
   { 
     id: 1, 
@@ -65,9 +66,6 @@ export const CALIBERS = Object.freeze([
 
 /**
  * Calcule avec précision le poids net estimé d'un palox en fonction de sa tare et de son volume
- * @param {string} size - Dimensions du conteneur (ex: "120/100" ou "120/120")
- * @param {string} fillLevel - Niveau de remplissage ("Plein", "3/4", "1/2", "1/4", "Vide")
- * @returns {number} Poids net estimé en kilogrammes
  */
 export const calculateWeight = (size, fillLevel) => {
   const baseWeight = size === "120/120" ? 330 : 280;
@@ -92,6 +90,7 @@ export const getFillLevelColor = (fillLevel) => {
     default: return "#cbd5e1";        // Gris par défaut
   }
 };
+
 /**
  * Renvoyer la couleur selon le nombre de Palox d'un produit
  */
@@ -101,23 +100,10 @@ export const getPaloxCountColor = (count) => {
     if (count < 20) return "#3B82F6";  // BLEU (< 20 Palox)
     return "#8B5CF6";                  // VIOLET (>= 20 Palox)
 };
-// Données d'initialisation (Mock) intégrant la traçabilité fournisseur
+
 export const INITIAL_PALOX = [
   { id: "1705570001", barcode: "PLX-9001", supplierId: "SUP-01", productId: 1, caliber: "80-95g", coldRoomId: 1, location: "A1", size: "120/100", fillLevel: "Plein", weight: 280, status: "STORED", dateAdded: "2026-07-15" },
   { id: "1705570002", barcode: "PLX-9002", supplierId: "SUP-02", productId: 2, caliber: "115-135g", coldRoomId: 1, location: "A2", size: "120/120", fillLevel: "Plein", weight: 330, status: "STORED", dateAdded: "2026-07-16" },
   { id: "1705570003", barcode: "PLX-9003", supplierId: "SUP-01", productId: 1, caliber: "80-95g", coldRoomId: 2, location: "B1", size: "120/100", fillLevel: "1/2", weight: 140, status: "STORED", dateAdded: "2026-07-17" },
-   { id: "1705570004", barcode: "PLX-9003", supplierId: "SUP-01", productId: 1, caliber: "80-95g", coldRoomId: 2, location: "B1", size: "120/100", fillLevel: "1/2", weight: 140, status: "PROCESSING", dateAdded: "2026-07-17" },
-
-  ];
-
-
-
-
-
-
-
-
-
-
-
-
+  { id: "1705570004", barcode: "PLX-9003", supplierId: "SUP-01", productId: 1, caliber: "80-95g", coldRoomId: 2, location: "B1", size: "120/100", fillLevel: "1/2", weight: 140, status: "PROCESSING", dateAdded: "2026-07-17" },
+];

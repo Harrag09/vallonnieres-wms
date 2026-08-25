@@ -21,9 +21,6 @@ const StockServise = {
     }
   },
 
-  // ======================================================
-  // NOUVELLE METHODE POUR FETCH LES STATS AVEC FILTRES
-  // ======================================================
   getStatistics: async (params) => {
     try {
       const response = await axios.get(`${Url}/stock/statistics`, { params });
@@ -72,8 +69,17 @@ const StockServise = {
     } catch (error) {
       throw error.response?.data?.error || error.message;
     }
+  },
+  
+  CreateCommand: async (payload) => {
+    try {
+      const response = await axios.post(`${Url}/stock/CreateCommand`, payload);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || error.message;
+    }
   }
 
 };
 
-export default StockServise;
+export default StockServise;  

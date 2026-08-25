@@ -12,6 +12,9 @@ export function useStockLogic() {
   const [COLD_ROOMS, setCOLD_ROOMS] = useState([]);
   const [STORES, setSTORES] = useState([]);
   const [palox, setPalox] = useState([]);
+  
+  // NOUVEAU: Stockage des commandes
+  const [commandes, setCommandes] = useState([]);
 
   const [search, setSearch] = useState("");
   const [selectedCaliber, setSelectedCaliber] = useState("ALL");
@@ -19,15 +22,20 @@ export function useStockLogic() {
 
   const [transferringPalox, setTransferringPalox] = useState(null);
   const [finalizingPalox, setFinalizingPalox] = useState(null);
+  
   const [isAddingPalox, setIsAddingPalox] = useState(false);
+  const [isCreatingCommand, setIsCreatingCommand] = useState(false); // NOUVEAU
+  
   const [isPreviewingRoom, setIsPreviewingRoom] = useState(false);
   const [selectedStores, setSelectedStores] = useState([]);
 
   const userIdMock = "6a5896cbdcd841dea495d174";
-  const supplierIdMock = "SUP-01";
+
+  // NOUVEAU: État pour la création de commande
+  const [newCommand, setNewCommand] = useState({ code: "", supplierId: "" });
 
   const [newPalox, setNewPalox] = useState({
-    productId: "", caliber: "Brut", coldRoomId: "", location: "A1", size: "120/100"
+    productId: "", caliber: "Brut", coldRoomId: "", location: "A1", size: "120/100", commandId: ""
   });
 
   const [returnDetails, setReturnDetails] = useState({
@@ -51,6 +59,7 @@ export function useStockLogic() {
         setSTORES((data.data.magasin || []).map(m => m.name));
         setPalox(data.data.palox || []);
         setHistory(data.data.history || []);
+        setCommandes(data.data.commandes || []); // Sauvegarde des commandes récupérées
 
         if (data.data.coldRoom?.length > 0) {
           const firstRoomId = data.data.coldRoom[0]._id;
@@ -90,7 +99,15 @@ export function useStockLogic() {
     return target.zones?.flatMap(z => target.positions.map(p => `${z}${p}`)) || [];
   }, [returnDetails.roomId, COLD_ROOMS]);
 
-  // CALCUL DYNAMIQUE DU POIDS LORS DU CHANGEMENT DE FILL LEVEL
+  // NOUVEAU: Filtrer uniquement les commandes créées aujourd'hui
+  const todaysCommands = useMemo(() => {
+    const todayStr = new Date().toDateString();
+    return commandes.filter(c => {
+      const d = new Date(c.createdAt);
+      return d.toDateString() === todayStr && c.status === "OPEN";
+    });
+  }, [commandes]);
+
   const currentCalculatedWeight = useMemo(() => {
     if (!finalizingPalox) return 0;
     return calculateWeight(finalizingPalox.size, returnDetails.fillLevel);
@@ -133,6 +150,44 @@ export function useStockLogic() {
   }, [palox, selectedRoom, roomLocations, activeRoom]);
 
   // --- ACTIONS (Handlers) ---
+
+  // NOUVEAU: Gérer l'ouverture (vérification des commandes du jour)
+  const handleOpenAddPalox = () => {
+    if (todaysCommands.length === 0) {
+      setIsCreatingCommand(true); // Aucune commande aujourd'hui, on force la création
+    } else {
+      if (!newPalox.commandId) {
+        setNewPalox(prev => ({ ...prev, commandId: todaysCommands[0]._id })); // Assigner la 1ere par défaut
+      }
+      setIsAddingPalox(true); // On ouvre l'ajout directement
+    }
+  };
+
+  // NOUVEAU: Création de la commande
+  const handleCreateCommand = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await StockServise.CreateCommand({ 
+        code: newCommand.code, 
+        supplierId: newCommand.supplierId 
+      });
+      
+      if (response.success) {
+        // Ajouter à la liste des commandes en local
+        setCommandes(prev => [...prev, response.data]);
+        
+        // Mettre l'ID de cette nouvelle commande dans le futur palox
+        setNewPalox(prev => ({ ...prev, commandId: response.data._id }));
+        
+        setIsCreatingCommand(false); // Fermer le modal de commande
+        setIsAddingPalox(true); // Ouvrir le modal du Palox
+        setNewCommand({ code: "", supplierId: "" }); // Réinitialiser le form
+      }
+    } catch (error) {
+      alert("Erreur lors de la création de la commande.");
+    }
+  };
+
   const handleMovePalox = async (targetRoomId, targetLocation) => {
     if (!transferringPalox) return;
     const destRoom = COLD_ROOMS.find(r => String(r._id) === String(targetRoomId));
@@ -160,6 +215,11 @@ export function useStockLogic() {
 
     if (currentOccupancy >= targetRoom.maxCapacityPerPos) return alert("Emplacement saturé !");
 
+    // L'ID du fournisseur doit être celui de la commande choisie
+    const selectedCommand = todaysCommands.find(c => c._id === newPalox.commandId);
+    const supplierForThisPalox = selectedCommand ? selectedCommand.supplierId : "SUP-01";
+    const commandCode = selectedCommand ? selectedCommand.code : "";
+
     const payload = {
       barcode: `PLX-${Math.floor(1000 + Math.random() * 9000)}`,
       productId: newPalox.productId,
@@ -168,7 +228,9 @@ export function useStockLogic() {
       location: newPalox.location,
       size: newPalox.size,
       weight: calculateWeight(newPalox.size, "Plein"),
-      supplierId: supplierIdMock,
+      supplierId: supplierForThisPalox,
+      commandId: newPalox.commandId, // On envoie l'ID de commande
+      commandCode: commandCode,      // Facilité pour l'historique dans le backend
       fillLevel: "Plein",
       status: "STORED",
       dateAdded: `Le ${new Date().toLocaleDateString('fr-FR')} - à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
@@ -251,18 +313,18 @@ export function useStockLogic() {
     state: { 
       isLoading, selectedRoom, search, selectedCaliber, selectedProductFilter, 
       transferringPalox, finalizingPalox, isAddingPalox, isPreviewingRoom, 
-      newPalox, returnDetails, selectedStores 
+      newPalox, returnDetails, selectedStores, isCreatingCommand, newCommand // Exposés
     },
     data: { 
       PRODUCTS, COLD_ROOMS, STORES, palox, history, activeRoom, 
       roomLocations, addingRoomLocations, modalRoomLocations, 
-      currentRoomStockGrouped, processingPaloxList, metrics, currentCalculatedWeight 
+      currentRoomStockGrouped, processingPaloxList, metrics, currentCalculatedWeight, todaysCommands // Exposé
     },
     setters: { 
       setSelectedRoom, setSearch, setSelectedCaliber, setSelectedProductFilter, 
       setTransferringPalox, setFinalizingPalox, setIsAddingPalox, setIsPreviewingRoom, 
-      setNewPalox, setReturnDetails, setSelectedStores 
+      setNewPalox, setReturnDetails, setSelectedStores, setIsCreatingCommand, setNewCommand // Exposés
     },
-    handlers: { handleMovePalox, handleCreatePalox, handleFinalizeProcessing, initiateTransit }
+    handlers: { handleMovePalox, handleCreatePalox, handleFinalizeProcessing, initiateTransit, handleCreateCommand, handleOpenAddPalox } // Nouveaux handlers
   };
 }

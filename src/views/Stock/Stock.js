@@ -9,13 +9,11 @@ import {
 } from "lucide-react";
 import ReactLoading from 'react-loading';
 
-import { CALIBERS, getFillLevelColor } from "./data";
-import { AddPaloxModal, MovePaloxModal } from "./PaloxModals";
+import { CALIBERS, getFillLevelColor, FOURNISSEURS } from "./data";
+import { AddPaloxModal, MovePaloxModal, CreateCommandModal } from "./PaloxModals";
 import RoomMapping from "./RoomMapping";
 import PivotZone from "./PivotZone";
 import { useStockLogic } from "./useStockLogic";
-
-
 
 // ======================================
 // STYLED COMPONENTS
@@ -361,7 +359,8 @@ export default function StockManagement() {
             <h1>Gestion des Stocks Palox</h1>
             <p><WarehouseIcon size={16} /> Suivi interactif des chambres froides</p>
           </TitleGroup>
-          <StyledButton onClick={() => setters.setIsAddingPalox(true)} style={{ background: "#2563eb", color: "white", padding: "12px 24px", width: "auto" }}>
+          {/* Modification ici pour gérer l'ouverture intelligente de la modale */}
+          <StyledButton onClick={handlers.handleOpenAddPalox} style={{ background: "#2563eb", color: "white", padding: "12px 24px", width: "auto" }}>
             <Plus size={16} /> Réceptionner Palox
           </StyledButton>
         </PageHeader>
@@ -485,11 +484,27 @@ export default function StockManagement() {
           )}
         </LogSection>
 
-        <AddPaloxModal
+        {/* NOUVELLE MODALE : Création de Commande */}
+        <CreateCommandModal
+          isOpen={state.isCreatingCommand}
+          onClose={() => setters.setIsCreatingCommand(false)}
+          newCommand={state.newCommand}
+          setNewCommand={setters.setNewCommand}
+          FOURNISSEURS={FOURNISSEURS}
+          onCreate={handlers.handleCreateCommand}
+        />
+<AddPaloxModal
           PRODUCTS={data.PRODUCTS} COLD_ROOMS={data.COLD_ROOMS} CALIBERS={CALIBERS}
           isOpen={state.isAddingPalox} onClose={() => setters.setIsAddingPalox(false)}
           newPalox={state.newPalox} setNewPalox={setters.setNewPalox}
           addingRoomLocations={data.addingRoomLocations} onCreate={handlers.handleCreatePalox}
+          todaysCommands={data.todaysCommands}
+          FOURNISSEURS={FOURNISSEURS}
+          // --- PASSEZ CETTE PROPRIÉTÉ ICI ---
+          onOpenCreateCommand={() => {
+            setters.setIsAddingPalox(false);       // Ferme l'ajout de palox
+            setters.setIsCreatingCommand(true);    // Ouvre la création de commande
+          }}
         />
         
         <MovePaloxModal
@@ -536,7 +551,6 @@ export default function StockManagement() {
                     <option value="Vide">Vide (0% - Sortie Définitive)</option>
                   </SelectInput>
 
-                  {/* POIDS MAJ EN TEMPS RÉEL DÈS QUE fillLevel CHANGE */}
                   <div style={{ 
                     marginTop: "8px", 
                     padding: "8px 12px", 

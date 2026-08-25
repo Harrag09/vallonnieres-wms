@@ -54,6 +54,19 @@ const SelectInput = styled.select`
   width: 100%;
 `;
 
+const TextInput = styled.input`
+  height: 46px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0 14px;
+  color: #334155;
+  font-weight: 500;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 const StyledButton = styled.button`
   border: none;
   padding: 10px 14px;
@@ -76,6 +89,60 @@ const StyledButton = styled.button`
 `;
 
 // ======================================
+// MODALE DE CRÉATION DE COMMANDE (NOUVEAU)
+// ======================================
+export function CreateCommandModal({ isOpen, onClose, newCommand, setNewCommand, FOURNISSEURS, onCreate }) {
+  if (!isOpen) return null;
+
+  return (
+    <ModalOverlay>
+      <ModalContent>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+          <h3>Créer une Commande du Jour</h3>
+          <X size={20} onClick={onClose} style={{ cursor: "pointer", color: "#64748b" }} />
+        </div>
+
+        <form onSubmit={onCreate}>
+          <div>
+            <label>Numéro de Commande :</label>
+            <TextInput
+              type="text"
+              required
+              placeholder="Ex: CMD-12345"
+              value={newCommand.code}
+              onChange={e => setNewCommand({ ...newCommand, code: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label>Fournisseur :</label>
+            <SelectInput
+              required
+              value={newCommand.supplierId}
+              onChange={e => setNewCommand({ ...newCommand, supplierId: e.target.value })}
+            >
+              <option value="" disabled>Sélectionnez un fournisseur</option>
+              {FOURNISSEURS.map(f => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </SelectInput>
+          </div>
+
+          <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+            <StyledButton type="button" onClick={onClose} style={{ background: "#f1f5f9", color: "#475569" }}>
+              Annuler
+            </StyledButton>
+            <StyledButton type="submit" variant="success">
+              Créer et Continuer <Plus size={16} />
+            </StyledButton>
+          </div>
+        </form>
+      </ModalContent>
+    </ModalOverlay>
+  );
+}
+
+// ======================================
 // MODALE D'AJOUT DE PALOX
 // ======================================
 export function AddPaloxModal({
@@ -87,7 +154,10 @@ export function AddPaloxModal({
   newPalox,
   setNewPalox,
   addingRoomLocations,
-  onCreate
+  onCreate,
+  todaysCommands,
+  FOURNISSEURS,
+  onOpenCreateCommand // <--- 1. Add this new prop
 }) {
   if (!isOpen) return null;
 
@@ -100,6 +170,39 @@ export function AddPaloxModal({
         </div>
 
         <form onSubmit={onCreate}>
+          {/* Choix de la commande liée avec un bouton d'ajout à côté */}
+          <div>
+            <label>Lier à la Commande du Jour :</label>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <SelectInput
+                required
+                value={newPalox.commandId || ""}
+                onChange={e => setNewPalox({ ...newPalox, commandId: e.target.value })}
+                style={{ flex: 1 }}
+              >
+                <option value="" disabled>Sélectionnez une commande</option>
+                {todaysCommands?.map(c => {
+                  const fournisseur = FOURNISSEURS.find(f => f.id === c.supplierId)?.name || c.supplierId;
+                  return (
+                    <option key={c._id} value={c._id}>
+                      {c.code} - {fournisseur}
+                    </option>
+                  );
+                })}
+              </SelectInput>
+              
+              {/* --- LE BOUTON POUR AJOUTER UNE NOUVELLE COMMANDE --- */}
+              <StyledButton 
+                type="button" 
+                onClick={onOpenCreateCommand}
+                style={{ width: "auto", padding: "0 14px", background: "#0ea5e9", color: "white" }}
+                title="Créer une nouvelle commande"
+              >
+                <Plus size={16} /> Nouvelle
+              </StyledButton>
+            </div>
+          </div>
+
           <div>
             <label>Variété de Fruit :</label>
             <SelectInput
@@ -161,11 +264,10 @@ export function AddPaloxModal({
             >
               <option value="120/100">120/100 (Standard)</option>
               <option value="120/120">120/120</option>
-              {/* <option value="80/120">80/120 (Europe)</option> */}
             </SelectInput>
           </div>
 
-          <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+          <div     style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
             <StyledButton type="button" onClick={onClose} style={{ background: "#f1f5f9", color: "#475569" }}>
               Annuler
             </StyledButton>
@@ -194,7 +296,6 @@ export function MovePaloxModal({
 
   if (!transferringPalox) return null;
 
-  // Calcul dynamique des emplacements de la chambre de destination sélectionnée
   const selectedDestRoom = COLD_ROOMS.find(r => r._id === targetRoomId) || COLD_ROOMS[0];
   const destRoomLocations = selectedDestRoom && selectedDestRoom.zones 
     ? selectedDestRoom.zones.flatMap(z => selectedDestRoom.positions.map(p => `${z}${p}`))

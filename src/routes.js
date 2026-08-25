@@ -8,6 +8,7 @@ import { useState } from "react";
 import Profil from "views/Profil";
 import Stock from "views/Stock/Stock";
 import Statistique from "views/Statistique/Statistique";
+import Utilisateurs from "views/Utilisateurs/Utilisateurs";
 const token = Cookies.get("access_token");
 const decoded = token ? jwtDecode(token) : "";
  const nm = Cookies.get("Name");
@@ -29,12 +30,21 @@ var routes = [
     component: <Stock/>,
     layout: "/admin",
   },);
+    
    routes.push(
   {
     path: "/statistique",
     name: "statistique",
     icon: "nc-icon nc-bank",
     component: <Statistique/>,
+    layout: "/admin",
+  },);
+   routes.push(
+  {
+    path: "/Utilisateurs",
+    name: "Utilisateurs",
+    icon: "nc-icon nc-bank",
+    component: <Utilisateurs/>,
     layout: "/admin",
   },);
 if (decoded.Role=== "admin") {

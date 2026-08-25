@@ -60,13 +60,19 @@ const Container = styled.div`
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     color: ${THEME.dark};
     box-sizing: border-box;
+        padding-top : 90px;
 
     @media (max-width: 1024px) {
-        padding: 24px 20px;
+        padding:0px 20px 24px 20px;
+            padding-top : 70px;
+
     }
 
     @media (max-width: 768px) {
-        padding: 16px 12px 90px 12px; /* Espace en bas pour éviter que le contenu soit caché par la barre mobile */
+
+        padding: 0px 12px 90px 12px; /* Espace en bas pour éviter que le contenu soit caché par la barre mobile */
+                padding-top : 70px;
+
     }
 `;
 
