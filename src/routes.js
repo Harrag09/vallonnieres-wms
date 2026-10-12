@@ -9,6 +9,8 @@ import Profil from "views/Profil";
 import Stock from "views/Stock/Stock";
 import Statistique from "views/Statistique/Statistique";
 import Utilisateurs from "views/Utilisateurs/Utilisateurs";
+import CommandeServer from "Service/CommandeServer";
+import CommandesConsultation from "views/Commandes/CommandesConsultation";
 const token = Cookies.get("access_token");
 const decoded = token ? jwtDecode(token) : "";
  const nm = Cookies.get("Name");
@@ -20,7 +22,7 @@ console.log()
 var routes = [
  
 ];
-
+   
 
    routes.push(
   {
@@ -30,7 +32,22 @@ var routes = [
     component: <Stock/>,
     layout: "/admin",
   },);
-    
+    routes.push(
+  {
+    path: "/commande",
+    name: "Ajouter commandes",
+    icon: "nc-icon nc-bank",
+    component: <CommandeServer/>,
+    layout: "/admin",
+  },);
+     routes.push(
+  {
+    path: "/CommandesConsultation",
+    name: "Commandes ",
+    icon: "nc-icon nc-bank",
+    component: <CommandesConsultation/>,
+    layout: "/admin",
+  },);
    routes.push(
   {
     path: "/statistique",
